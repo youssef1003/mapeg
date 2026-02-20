@@ -1,0 +1,296 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Role enum for unified authentication
+enum Role {
+  CANDIDATE
+  EMPLOYER
+  ADMIN
+}
+
+model User {
+  id        String     @id @default(cuid())
+  name      String?
+  email     String     @unique
+  password  String
+  phone     String?
+  role      Role       @default(CANDIDATE)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  candidate Candidate?
+  employer  Employer?
+}
+
+// Admin model kept for backward compatibility (deprecated)
+model Admin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Job {
+  id           String        @id @default(cuid())
+  title        String
+  company      String
+  location     String
+  country      String
+  type         String
+  salary       String?
+  description  String
+  requirements String
+  category     String
+  featured     Boolean       @default(false)
+  
+  // Translation fields
+  titleEn        String?
+  descriptionEn  String?
+  requirementsEn String?
+  
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  employerId   String?
+  employer     Employer?     @relation(fields: [employerId], references: [id])
+  applications Application[]
+}
+
+model Candidate {
+  id                String        @id @default(cuid())
+  name              String
+  email             String        @unique
+  phone             String
+  resume            String?
+  cvFilePath        String?
+  profession        String?
+  summary           String?
+  yearsOfExperience Int?
+  city              String?
+  skills            String
+  experience        String
+  education         String
+  country           String
+  userId            String?       @unique
+  user              User?         @relation(fields: [userId], references: [id])
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  applications      Application[]
+}
+
+model Employer {
+  id          String   @id @default(cuid())
+  companyName String
+  email       String   @unique
+  phone       String
+  industry    String
+  website     String?
+  logo        String?
+  description String?
+  country     String
+  userId      String?  @unique
+  user        User?    @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  jobs        Job[]
+}
+
+model Application {
+  id          String    @id @default(cuid())
+  status      String    @default("pending")
+  coverLetter String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  jobId       String
+  job         Job       @relation(fields: [jobId], references: [id])
+  candidateId String
+  candidate   Candidate @relation(fields: [candidateId], references: [id])
+}
+
+model Contact {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String
+  message   String
+  createdAt DateTime @default(now())
+}
+
+model BlogPost {
+  id        String   @id @default(cuid())
+  title     String
+  slug      String   @unique
+  excerpt   String
+  content   String
+  author    String
+  image     String?
+  published Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  role      String
+  company   String
+  content   String
+  image     String?
+  rating    Int      @default(5)
+  createdAt DateTime @default(now())
+}
+
+model SiteSettings {
+  id                String   @id @default("main")
+  siteName          String   @default("MapEg")
+  siteEmail         String   @default("info@mapeg.com")
+  sitePhone         String   @default("+20 2 1234 5678")
+  siteAddress       String   @default("123 Business District, New Cairo, Egypt")
+  candidatesPlaced  String   @default("15,000+")
+  partnerCompanies  String   @default("2,500+")
+  countriesCovered  String   @default("10+")
+  successRate       String   @default("98%")
+  heroJobsToday     String   @default("250+")
+  heroCountries     String   @default("10+")
+  aboutCandidates   String   @default("15,000+")
+  aboutCompanies    String   @default("2,500+")
+  // About page content
+  aboutMissionAr    String?  @db.Text
+  aboutMissionEn    String?  @db.Text
+  // Social media
+  facebookUrl       String?
+  twitterUrl        String?
+  linkedinUrl       String?
+  instagramUrl      String?
+  whatsappNumber    String?
+  updatedAt         DateTime @updatedAt
+}
+
+model PageView {
+  id        String   @id @default(cuid())
+  page      String
+  userAgent String?
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([page])
+}
+
+// About Page Content Management
+model AboutPageContent {
+  id                String   @id @default("main")
+  // Hero Section
+  heroTitleAr       String   @default("من نحن")
+  heroTitleEn       String   @default("About Us")
+  heroHighlightAr   String   @default("MapEg")
+  heroHighlightEn   String   @default("MapEg")
+  heroSubtitleAr    String   @db.Text
+  heroSubtitleEn    String   @db.Text
+  
+  // Mission Section
+  missionTitleAr    String   @default("مهمتنا")
+  missionTitleEn    String   @default("Our Mission")
+  missionTextAr     String   @db.Text
+  missionTextEn     String   @db.Text
+  
+  // Stats
+  candidatesPlaced  String   @default("15,000+")
+  partnerCompanies  String   @default("2,500+")
+  countriesCovered  String   @default("10+")
+  
+  // Values Section
+  valuesTitleAr     String   @default("قيمنا الأساسية")
+  valuesTitleEn     String   @default("Our Core Values")
+  valuesSubtitleAr  String   @db.Text
+  valuesSubtitleEn  String   @db.Text
+  
+  updatedAt         DateTime @updatedAt
+}
+
+model AboutValue {
+  id            String   @id @default(cuid())
+  icon          String
+  titleAr       String
+  titleEn       String
+  descriptionAr String   @db.Text
+  descriptionEn String   @db.Text
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model AboutMilestone {
+  id            String   @id @default(cuid())
+  year          String
+  titleAr       String
+  titleEn       String
+  descriptionAr String   @db.Text
+  descriptionEn String   @db.Text
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model AboutTeamMember {
+  id       String   @id @default(cuid())
+  nameAr   String
+  nameEn   String
+  roleAr   String
+  roleEn   String
+  bioAr    String   @db.Text
+  bioEn    String   @db.Text
+  image    String?
+  order    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AboutOffice {
+  id         String   @id @default(cuid())
+  icon       String
+  nameAr     String
+  nameEn     String
+  labelAr    String
+  labelEn    String
+  addressAr  String   @db.Text
+  addressEn  String   @db.Text
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+// Blog Management
+model BlogPostManaged {
+  id          String   @id @default(cuid())
+  titleAr     String
+  titleEn     String
+  excerptAr   String   @db.Text
+  excerptEn   String   @db.Text
+  contentAr   String   @db.Text
+  contentEn   String   @db.Text
+  authorAr    String
+  authorEn    String
+  categoryAr  String
+  categoryEn  String
+  image       String?
+  featured    Boolean  @default(false)
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model BlogCategory {
+  id      String   @id @default(cuid())
+  nameAr  String   @unique
+  nameEn  String   @unique
+  order   Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

@@ -1,0 +1,274 @@
+.actionsBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+}
+
+.filters {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.searchInput {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--bg-primary);
+    padding: 0.625rem 1rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    width: 300px;
+}
+
+.searchInput svg {
+    color: var(--text-tertiary);
+}
+
+.searchInput input {
+    border: none;
+    background: none;
+    outline: none;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    width: 100%;
+}
+
+.filterSelect {
+    padding: 0.625rem 1rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    background: var(--bg-primary);
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+.statsRow {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.5rem;
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+}
+
+.statItem {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.statNumber {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.statText {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.featuredBadge {
+    margin-right: 0.5rem;
+    font-size: 0.75rem;
+}
+
+.applicationCount {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 24px;
+    padding: 0 0.5rem;
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.actionBtn {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--bg-primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.actionBtn:hover {
+    background: var(--bg-secondary);
+    border-color: var(--primary);
+}
+
+/* Candidates Page Specific */
+.candidateCard {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+}
+
+.candidateCard:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.candidateAvatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.candidateInfo {
+    flex: 1;
+}
+
+.candidateInfo h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.candidateInfo p {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.candidateMeta {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.metaItem {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+}
+
+.candidatesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1rem;
+}
+
+/* Employers Page Specific */
+.employerCard {
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    transition: all 0.2s;
+}
+
+.employerCard:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.employerHeader {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.employerLogo {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-md);
+    background: var(--gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.employerName h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.employerName p {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.employerStats {
+    display: flex;
+    gap: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+}
+
+.employerStat {
+    text-align: center;
+}
+
+.employerStat span:first-child {
+    display: block;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.employerStat span:last-child {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+}
+
+.employersGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+@media (max-width: 768px) {
+    .actionsBar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filters {
+        flex-direction: column;
+    }
+
+    .searchInput {
+        width: 100%;
+    }
+
+    .statsRow {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}

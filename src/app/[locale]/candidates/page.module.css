@@ -1,0 +1,304 @@
+.candidatesPage {
+    min-height: 100vh;
+}
+
+/* Hero */
+.hero {
+    background: var(--gradient-dark);
+    padding: var(--space-3xl) 0;
+    text-align: center;
+    color: var(--white);
+}
+
+.heroContent h1 {
+    font-size: 3rem;
+    margin-bottom: var(--space-lg);
+}
+
+.heroContent p {
+    font-size: 1.25rem;
+    color: var(--gray-light);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Benefits */
+.benefits {
+    background: var(--white);
+    padding: var(--space-3xl) 0;
+    margin-top: -40px;
+    position: relative;
+    z-index: 10;
+}
+
+.benefitsGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-lg);
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    padding: var(--space-xl);
+    box-shadow: var(--shadow-xl);
+}
+
+.benefitCard {
+    text-align: center;
+    padding: var(--space-lg);
+}
+
+.benefitIcon {
+    font-size: 2.5rem;
+    margin-bottom: var(--space-md);
+}
+
+.benefitCard h3 {
+    font-size: 1rem;
+    margin-bottom: var(--space-sm);
+}
+
+.benefitCard p {
+    color: var(--gray);
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+/* Register Section */
+.registerSection {
+    background: var(--light);
+}
+
+.registerWrapper {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* Progress Bar */
+.progressBar {
+    margin-bottom: var(--space-2xl);
+}
+
+.progressSteps {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--space-md);
+}
+
+.progressStep {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    color: var(--gray);
+    font-size: 0.875rem;
+}
+
+.progressStep span {
+    width: 40px;
+    height: 40px;
+    background: var(--white);
+    border: 2px solid var(--light-secondary);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.progressStep.active span {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--white);
+}
+
+.progressStep.active {
+    color: var(--primary);
+}
+
+.progressLine {
+    height: 4px;
+    background: var(--light-secondary);
+    border-radius: var(--radius-full);
+    position: relative;
+}
+
+.progressFill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: var(--gradient-primary);
+    border-radius: var(--radius-full);
+    transition: var(--transition);
+}
+
+/* Form */
+.registerForm {
+    background: var(--white);
+    padding: var(--space-2xl);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+}
+
+.formStep h2 {
+    text-align: center;
+    margin-bottom: var(--space-sm);
+}
+
+.stepDescription {
+    text-align: center;
+    color: var(--gray);
+    margin-bottom: var(--space-xl);
+}
+
+.formRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+}
+
+.inputHint {
+    display: block;
+    margin-top: var(--space-xs);
+    color: var(--gray-light);
+    font-size: 0.8rem;
+}
+
+/* Upload Area */
+.uploadArea {
+    border: 2px dashed var(--light-secondary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-3xl) var(--space-xl);
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.uploadArea:hover {
+    border-color: var(--primary);
+    background: rgba(99, 102, 241, 0.03);
+}
+
+.uploadIcon {
+    font-size: 3rem;
+    margin-bottom: var(--space-md);
+}
+
+.uploadArea h3 {
+    font-size: 1.125rem;
+    margin-bottom: var(--space-sm);
+}
+
+.uploadArea p {
+    color: var(--gray);
+    font-size: 0.9rem;
+}
+
+.fileInput {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.fileName {
+    margin-top: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
+    background: rgba(20, 184, 166, 0.1);
+    color: var(--accent);
+    border-radius: var(--radius);
+    font-weight: 500;
+    display: inline-block;
+}
+
+.uploadHint {
+    display: block;
+    text-align: center;
+    margin-top: var(--space-md);
+    color: var(--gray-light);
+    font-size: 0.8rem;
+}
+
+/* Form Actions */
+.formActions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--space-xl);
+    gap: var(--space-md);
+}
+
+.formActions button {
+    flex: 1;
+}
+
+/* Categories */
+.categories {
+    background: var(--white);
+}
+
+.categoriesGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-md);
+}
+
+.categoryCard {
+    background: var(--light);
+    padding: var(--space-lg);
+    border-radius: var(--radius);
+    text-align: center;
+    font-weight: 500;
+    color: var(--dark);
+    transition: var(--transition);
+}
+
+.categoryCard:hover {
+    background: var(--primary);
+    color: var(--white);
+    transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .benefitsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .categoriesGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .heroContent h1 {
+        font-size: 2rem;
+    }
+
+    .benefitsGrid {
+        grid-template-columns: 1fr;
+        padding: var(--space-lg);
+    }
+
+    .progressStep {
+        font-size: 0.75rem;
+    }
+
+    .progressStep span {
+        width: 32px;
+        height: 32px;
+        font-size: 0.875rem;
+    }
+
+    .formRow {
+        grid-template-columns: 1fr;
+    }
+
+    .formActions {
+        flex-direction: column;
+    }
+
+    .categoriesGrid {
+        grid-template-columns: 1fr;
+    }
+}

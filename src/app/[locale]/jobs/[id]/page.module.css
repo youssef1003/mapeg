@@ -1,0 +1,337 @@
+.jobDetailPage {
+    min-height: 100vh;
+    background: var(--light);
+    padding-bottom: var(--space-3xl);
+}
+
+.breadcrumb {
+    background: var(--white);
+    padding: var(--space-lg) 0;
+    border-bottom: 1px solid var(--light-secondary);
+    margin-bottom: var(--space-xl);
+}
+
+.breadcrumb a {
+    color: var(--primary);
+    font-weight: 500;
+}
+
+.jobDetailGrid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: var(--space-2xl);
+    align-items: start;
+}
+
+/* Main Content */
+.mainContent {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: var(--space-2xl);
+    box-shadow: var(--shadow);
+}
+
+.jobHeader {
+    display: flex;
+    gap: var(--space-xl);
+    padding-bottom: var(--space-xl);
+    border-bottom: 1px solid var(--light-secondary);
+    margin-bottom: var(--space-xl);
+}
+
+.companyLogo {
+    width: 80px;
+    height: 80px;
+    background: var(--gradient-primary);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-size: 2rem;
+    font-weight: 700;
+    font-family: 'Outfit', sans-serif;
+    flex-shrink: 0;
+}
+
+.jobInfo h1 {
+    font-size: 1.75rem;
+    margin-bottom: var(--space-sm);
+}
+
+.company {
+    color: var(--gray);
+    font-size: 1.125rem;
+    margin-bottom: var(--space-md);
+}
+
+.jobMeta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-lg);
+}
+
+.jobMeta span {
+    color: var(--dark-tertiary);
+    font-size: 0.9rem;
+}
+
+.section {
+    margin-bottom: var(--space-2xl);
+}
+
+.section:last-child {
+    margin-bottom: 0;
+}
+
+.section h2 {
+    font-size: 1.25rem;
+    margin-bottom: var(--space-lg);
+    color: var(--dark);
+}
+
+.content p {
+    color: var(--dark-tertiary);
+    line-height: 1.8;
+    margin-bottom: var(--space-md);
+}
+
+.content p:last-child {
+    margin-bottom: 0;
+}
+
+.benefitsList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+}
+
+.benefitsList li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    color: var(--dark-tertiary);
+}
+
+.checkIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: rgba(20, 184, 166, 0.1);
+    color: var(--accent);
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+/* Sidebar */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+    position: sticky;
+    top: 100px;
+}
+
+.applyCard {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    box-shadow: var(--shadow);
+    text-align: center;
+}
+
+.applyCard h3 {
+    margin-bottom: var(--space-lg);
+}
+
+.applyNote {
+    color: var(--gray);
+    font-size: 0.8rem;
+    margin-top: var(--space-md);
+}
+
+.companyCard {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    box-shadow: var(--shadow);
+}
+
+.companyHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+}
+
+.companyLogoSmall {
+    width: 48px;
+    height: 48px;
+    background: var(--gradient-primary);
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-size: 1.25rem;
+    font-weight: 700;
+    font-family: 'Outfit', sans-serif;
+}
+
+.companyHeader h4 {
+    font-size: 1rem;
+    margin-bottom: 0.125rem;
+}
+
+.companyHeader p {
+    color: var(--gray);
+    font-size: 0.8rem;
+}
+
+.companyDesc {
+    color: var(--dark-tertiary);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: var(--space-md);
+}
+
+.companyLink {
+    color: var(--primary);
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.shareCard {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    box-shadow: var(--shadow);
+}
+
+.shareCard h4 {
+    margin-bottom: var(--space-md);
+}
+
+.shareButtons {
+    display: flex;
+    gap: var(--space-sm);
+}
+
+.shareBtn {
+    flex: 1;
+    padding: 0.5rem;
+    background: var(--light);
+    border: none;
+    border-radius: var(--radius);
+    color: var(--dark-tertiary);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.shareBtn:hover {
+    background: var(--primary);
+    color: var(--white);
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-xl);
+}
+
+.modalBackdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(4px);
+}
+
+.modalContent {
+    position: relative;
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    padding: var(--space-2xl);
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: fadeIn 0.3s ease;
+}
+
+.modalClose {
+    position: absolute;
+    top: var(--space-lg);
+    right: var(--space-lg);
+    width: 32px;
+    height: 32px;
+    background: var(--light);
+    border: none;
+    border-radius: var(--radius-full);
+    font-size: 1.5rem;
+    color: var(--gray);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.modalClose:hover {
+    background: var(--light-secondary);
+    color: var(--dark);
+}
+
+.modalContent h2 {
+    margin-bottom: var(--space-xs);
+}
+
+.modalSubtitle {
+    color: var(--gray);
+    margin-bottom: var(--space-xl);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .jobDetailGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        position: static;
+    }
+}
+
+@media (max-width: 768px) {
+    .mainContent {
+        padding: var(--space-lg);
+    }
+
+    .jobHeader {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .companyLogo {
+        margin: 0 auto;
+    }
+
+    .jobMeta {
+        justify-content: center;
+    }
+
+    .benefitsList {
+        grid-template-columns: 1fr;
+    }
+}

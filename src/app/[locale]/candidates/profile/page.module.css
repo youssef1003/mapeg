@@ -1,0 +1,137 @@
+.container {
+  min-height: 80vh;
+  padding: 2rem 0;
+}
+
+.content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.loading {
+  text-align: center;
+  padding: 4rem;
+  font-size: 1.25rem;
+  color: var(--gray);
+}
+
+.header {
+  margin-bottom: 2rem;
+}
+
+.header h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: var(--dark);
+}
+
+.header p {
+  color: var(--gray);
+  font-size: 1.1rem;
+}
+
+.card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--light-secondary);
+  margin-bottom: 2rem;
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--gradient-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+}
+
+.cardHeader h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+  color: var(--dark);
+}
+
+.cardHeader p {
+  color: var(--gray);
+}
+
+.section {
+  margin-bottom: 2rem;
+}
+
+.section h3 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: var(--dark);
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.infoItem label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--gray);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.infoItem p {
+  font-size: 1rem;
+  color: var(--dark);
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.notice {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: rgba(99, 102, 241, 0.1);
+  border-radius: var(--radius);
+  border-left: 4px solid var(--primary);
+}
+
+.notice p {
+  margin: 0;
+  color: var(--dark);
+  font-size: 0.95rem;
+}
+
+@media (max-width: 768px) {
+  .cardHeader {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .actions .btn {
+    width: 100%;
+  }
+}
