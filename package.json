@@ -8,9 +8,10 @@
     "db:setup": "npm run db:migrate && npm run db:seed",
     "dev:full": "npm run db:setup && npm run dev",
     "dev": "next dev -p 3000",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^5.7.0",
