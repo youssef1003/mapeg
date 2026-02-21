@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import { requireAuth } from '@/lib/auth'
 
-// GET - Fetch a single employer
+// GET - Fetch a single employer (public but hide sensitive fields for non-admin)
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
+    const session = await requireAuth(request)
+    const isAdmin = session?.role === 'ADMIN'
+
     const employer = await prisma.employer.findUnique({
       where: { id: params.id },
       include: {
@@ -22,6 +26,23 @@ export async function GET(
       )
     }
 
+    // Hide sensitive fields for non-admin
+    if (!isAdmin) {
+      const sanitized = {
+        id: employer.id,
+        companyName: employer.companyName,
+        industry: employer.industry,
+        country: employer.country,
+        website: employer.website,
+        description: employer.description,
+        jobs: employer.jobs,
+        _count: employer._count,
+        createdAt: employer.createdAt,
+        updatedAt: employer.updatedAt
+      }
+      return NextResponse.json(sanitized)
+    }
+
     return NextResponse.json(employer)
   } catch (error) {
     console.error('Error fetching employer:', error)
@@ -32,12 +53,17 @@ export async function GET(
   }
 }
 
-// PUT - Update an employer
+// PUT - Update an employer (Admin or owner only)
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
+    const session = await requireAuth(request)
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const body = await request.json()
 
     // Check if employer exists
@@ -50,6 +76,11 @@ export async function PUT(
         { error: 'Employer not found' },
         { status: 404 }
       )
+    }
+
+    // Check authorization: Admin or owner
+    if (session.role !== 'ADMIN' && existing.userId !== session.sub) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
     const employer = await prisma.employer.update({
@@ -75,12 +106,17 @@ export async function PUT(
   }
 }
 
-// DELETE - Delete an employer
+// DELETE - Delete an employer (Admin or owner only)
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
+    const session = await requireAuth(request)
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     // Check if employer exists
     const employer = await prisma.employer.findUnique({
       where: { id: params.id },
@@ -94,6 +130,11 @@ export async function DELETE(
         { error: 'Employer not found' },
         { status: 404 }
       )
+    }
+
+    // Check authorization: Admin or owner
+    if (session.role !== 'ADMIN' && employer.userId !== session.sub) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
     // Check if employer has jobs

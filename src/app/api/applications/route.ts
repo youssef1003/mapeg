@@ -164,6 +164,7 @@ export async function GET(request: NextRequest) {
                             name: true,
                             email: true,
                             phone: true,
+                            cvFilePath: true,
                         },
                     },
                 },
@@ -232,6 +233,7 @@ export async function GET(request: NextRequest) {
                             phone: true,
                             profession: true,
                             yearsOfExperience: true,
+                            cvFilePath: true,
                         },
                     },
                 },
@@ -243,7 +245,15 @@ export async function GET(request: NextRequest) {
             )
         }
 
-        return NextResponse.json({ applications })
+        // Add cvUrl to each application
+        const applicationsWithCvUrl = applications.map((app: any) => ({
+            ...app,
+            cvUrl: app.candidate?.cvFilePath 
+                ? `/api/cv?pathname=${encodeURIComponent(app.candidate.cvFilePath)}`
+                : null
+        }))
+
+        return NextResponse.json({ applications: applicationsWithCvUrl })
     } catch (error) {
         console.error('Error fetching applications:', error)
         return NextResponse.json(

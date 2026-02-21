@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import { requireAdmin } from '@/lib/auth'
 
-// GET - Fetch all candidates
+// GET - Fetch all candidates (Admin only - contains PII)
 export async function GET(request: NextRequest) {
+    const session = await requireAdmin(request)
+    if (!session) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     try {
         const { searchParams } = new URL(request.url)
         const search = searchParams.get('search')

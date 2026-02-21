@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic'
 
 export async function GET(request: NextRequest) {
   try {
-    // Check JWT session first
+    // Check JWT session
     const sessionCookie = request.cookies.get('session')
     
     if (sessionCookie?.value) {
@@ -23,23 +23,6 @@ export async function GET(request: NextRequest) {
           }
         })
       }
-    }
-
-    // Fallback: Check old admin session for backward compatibility
-    const adminSession = request.cookies.get('admin_session')
-    const isAdmin = adminSession?.value === 'true'
-
-    if (isAdmin) {
-      return NextResponse.json({
-        isLoggedIn: true,
-        isAdmin: true,
-        user: {
-          id: 'admin',
-          name: 'Super Admin',
-          email: process.env.ADMIN_EMAIL || 'admin@mapeg.com',
-          role: 'ADMIN'
-        }
-      })
     }
 
     // Not logged in

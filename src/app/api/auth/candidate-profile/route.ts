@@ -1,21 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import { requireAuth } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
     try {
-        const body = await request.json()
-        const { userId, profession, yearsOfExperience, city, skills, summary, cvFilePath } = body
-
-        if (!userId) {
-            return NextResponse.json(
-                { error: 'User ID is required' },
-                { status: 400 }
-            )
+        const session = await requireAuth(request)
+        if (!session) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
+
+        const body = await request.json()
+        const { profession, yearsOfExperience, city, skills, summary, cvFilePath } = body
+
+        // Candidates can only update themselves, Admin can update anyone
+        const targetUserId = session.role === 'ADMIN' && body.userId ? body.userId : session.sub
 
         // Update Candidate record
         const candidate = await prisma.candidate.update({
-            where: { userId },
+            where: { userId: targetUserId },
             data: {
                 profession: profession || null,
                 yearsOfExperience: yearsOfExperience ? parseInt(yearsOfExperience) : null,

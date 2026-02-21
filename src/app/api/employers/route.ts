@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import { requireAuth } from '@/lib/auth'
 
-// GET - Fetch all employers
-export async function GET() {
+// GET - Fetch all employers (public but hide sensitive fields for non-admin)
+export async function GET(request: NextRequest) {
   try {
+    const session = await requireAuth(request)
+    const isAdmin = session?.role === 'ADMIN'
+
     const employers = await prisma.employer.findMany({
       include: {
         _count: {
@@ -12,6 +16,22 @@ export async function GET() {
       },
       orderBy: { createdAt: 'desc' }
     })
+
+    // Hide sensitive fields for non-admin
+    if (!isAdmin) {
+      const sanitized = employers.map(emp => ({
+        id: emp.id,
+        companyName: emp.companyName,
+        industry: emp.industry,
+        country: emp.country,
+        website: emp.website,
+        description: emp.description,
+        _count: emp._count,
+        createdAt: emp.createdAt,
+        updatedAt: emp.updatedAt
+      }))
+      return NextResponse.json(sanitized)
+    }
 
     return NextResponse.json(employers)
   } catch (error) {
@@ -23,8 +43,14 @@ export async function GET() {
   }
 }
 
-// POST - Create a new employer
+// POST - Create a new employer (Admin only)
 export async function POST(request: NextRequest) {
+  const { requireAdmin } = await import('@/lib/auth')
+  const session = await requireAdmin(request)
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   try {
     const body = await request.json()
 
