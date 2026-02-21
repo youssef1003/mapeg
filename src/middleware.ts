@@ -7,9 +7,20 @@ const intlMiddleware = createMiddleware({
 })
 
 export function middleware(request: NextRequest) {
-  // Skip rate limiting for now to debug
-  // Just apply intl middleware and security headers
+  const { pathname } = request.nextUrl
   
+  // Safety net: Rewrite /{locale}/api/* to /api/*
+  // This prevents 404/405 errors when frontend accidentally calls localized API paths
+  const localeApiMatch = pathname.match(/^\/(ar|en)\/api\/(.*)$/)
+  if (localeApiMatch) {
+    const apiPath = localeApiMatch[2]
+    const url = request.nextUrl.clone()
+    url.pathname = `/api/${apiPath}`
+    console.log(`[Middleware] Rewriting ${pathname} → ${url.pathname}`)
+    return NextResponse.rewrite(url)
+  }
+  
+  // Apply intl middleware for non-API routes
   const response = intlMiddleware(request)
   
   // Security headers
@@ -22,5 +33,8 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!_next|.*\\..*).*)'],
+  matcher: [
+    '/((?!_next|.*\\..*).*)',  // Original matcher for intl
+    '/(ar|en)/api/:path*',      // Match localized API paths for rewrite
+  ],
 }

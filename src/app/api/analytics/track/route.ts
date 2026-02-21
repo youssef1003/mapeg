@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 
+export const dynamic = 'force-dynamic'
+
+// GET handler to prevent 405 errors (returns 204 No Content)
+export async function GET() {
+    return new NextResponse(null, { status: 204 })
+}
+
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json()
