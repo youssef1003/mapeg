@@ -40,8 +40,14 @@ export async function GET() {
     }
 }
 
-// PUT - Update site settings
+// PUT - Update site settings (Admin only)
 export async function PUT(request: NextRequest) {
+    const { requireAdmin } = await import('@/lib/auth')
+    const session = await requireAdmin(request)
+    if (!session) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     try {
         const body = await request.json()
 

@@ -1,5 +1,5 @@
 // Email service using Nodemailer
-// Install: npm install nodemailer @types/nodemailer
+import nodemailer from 'nodemailer'
 
 interface EmailOptions {
   to: string
@@ -8,24 +8,57 @@ interface EmailOptions {
   locale?: 'ar' | 'en'
 }
 
+// Create transporter (lazy initialization)
+let transporter: nodemailer.Transporter | null = null
+
+function getTransporter() {
+  if (!transporter) {
+    const smtpHost = process.env.SMTP_HOST
+    const smtpPort = process.env.SMTP_PORT
+    const smtpUser = process.env.SMTP_USER
+    const smtpPass = process.env.SMTP_PASS
+
+    // If SMTP not configured, return null (will log only)
+    if (!smtpHost || !smtpUser || !smtpPass) {
+      console.warn('⚠️ SMTP not configured. Emails will be logged only.')
+      return null
+    }
+
+    transporter = nodemailer.createTransport({
+      host: smtpHost,
+      port: parseInt(smtpPort || '465'),
+      secure: true,
+      auth: {
+        user: smtpUser,
+        pass: smtpPass,
+      },
+    })
+  }
+  return transporter
+}
+
 export async function sendEmail({ to, subject, html }: EmailOptions) {
-  // For now, just log (you'll need to configure SMTP)
-  console.log('📧 Email would be sent:', { to, subject })
+  const transport = getTransporter()
   
-  // TODO: Configure nodemailer with your SMTP settings
-  // const nodemailer = require('nodemailer')
-  // const transporter = nodemailer.createTransport({
-  //   host: process.env.SMTP_HOST,
-  //   port: process.env.SMTP_PORT,
-  //   secure: true,
-  //   auth: {
-  //     user: process.env.SMTP_USER,
-  //     pass: process.env.SMTP_PASS,
-  //   },
-  // })
-  // await transporter.sendMail({ from: process.env.SMTP_FROM, to, subject, html })
-  
-  return { success: true }
+  // If no transporter, just log
+  if (!transport) {
+    console.log('📧 Email would be sent:', { to, subject })
+    return { success: true }
+  }
+
+  try {
+    await transport.sendMail({
+      from: process.env.SMTP_FROM || 'MapEg <noreply@mapeg.com>',
+      to,
+      subject,
+      html,
+    })
+    console.log('✅ Email sent successfully to:', to)
+    return { success: true }
+  } catch (error) {
+    console.error('❌ Email send error:', error)
+    return { success: false, error }
+  }
 }
 
 // Email Templates

@@ -1,8 +1,13 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import { requireAdmin } from '@/lib/auth'
 
-// GET - Fetch dashboard stats from database
-export async function GET() {
+// GET - Fetch dashboard stats from database (Admin only)
+export async function GET(request: NextRequest) {
+    const session = await requireAdmin(request)
+    if (!session) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
     try {
         const [jobsCount, candidatesCount, employersCount, applicationsCount] = await Promise.all([
             prisma.job.count(),
