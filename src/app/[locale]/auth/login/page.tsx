@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { useRouter } from '@/navigation'
 import { Link } from '@/navigation'
+import { apiUrl } from '@/lib/api-url'
 import styles from './page.module.css'
 
 export default function LoginPage() {
@@ -24,7 +25,7 @@ export default function LoginPage() {
 
         // Try User Login via API
         try {
-            const response = await fetch('/api/auth/login', {
+            const response = await fetch(apiUrl('/auth/login'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

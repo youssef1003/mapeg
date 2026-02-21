@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Link } from '@/navigation'
+import { apiUrl } from '@/lib/api-url'
 import styles from '../login/page.module.css'
 
 export default function RegisterPage() {
@@ -76,7 +77,7 @@ export default function RegisterPage() {
 
         try {
             // Register User
-            const response = await fetch('/api/auth/register', {
+            const response = await fetch(apiUrl('/auth/register'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -129,7 +130,7 @@ export default function RegisterPage() {
                 const formDataUpload = new FormData()
                 formDataUpload.append('file', cvFile)
 
-                const uploadRes = await fetch('/api/upload/cv', {
+                const uploadRes = await fetch(apiUrl('/upload/cv'), {
                     method: 'POST',
                     body: formDataUpload
                 })
@@ -152,7 +153,7 @@ export default function RegisterPage() {
         const userId = formData.userId
 
         try {
-            const res = await fetch('/api/auth/candidate-profile', {
+            const res = await fetch(apiUrl('/auth/candidate-profile'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

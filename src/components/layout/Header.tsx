@@ -4,6 +4,7 @@ import { Link, useRouter } from '@/navigation'
 import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import { useParams } from 'next/navigation'
+import { apiUrl } from '@/lib/api-url'
 import LanguageSwitcher from '@/components/common/LanguageSwitcher'
 import styles from './Header.module.css'
 
@@ -19,7 +20,7 @@ export default function Header() {
         // Check auth state via API (works with httpOnly cookies)
         const checkAuth = async () => {
             try {
-                const response = await fetch('/api/auth/check-session', {
+                const response = await fetch(apiUrl('/auth/check-session'), {
                     credentials: 'include',
                 })
                 
@@ -66,7 +67,7 @@ export default function Header() {
         if (userRole === 'ADMIN') {
             // Admin logout - call admin logout API
             try {
-                await fetch('/api/admin/logout', { method: 'POST' })
+                await fetch(apiUrl('/admin/logout'), { method: 'POST' })
             } catch (error) {
                 console.error('Logout error:', error)
             }
@@ -76,7 +77,7 @@ export default function Header() {
         } else {
             // Normal user logout - call user logout API
             try {
-                await fetch('/api/auth/logout', { method: 'POST' })
+                await fetch(apiUrl('/auth/logout'), { method: 'POST' })
             } catch (error) {
                 console.error('Logout error:', error)
             }

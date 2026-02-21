@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from '@/navigation'
 import Image from 'next/image'
+import { apiUrl } from '@/lib/api-url'
 import styles from './page.module.css'
 import JobCard from '@/components/jobs/JobCard'
 import { useTranslations } from 'next-intl';
@@ -68,7 +69,7 @@ export default function Home() {
 
     const fetchFeaturedJobs = async () => {
         try {
-            const response = await fetch('/api/jobs')
+            const response = await fetch(apiUrl('/jobs'))
             if (response.ok) {
                 const data = await response.json()
                 // Filter featured jobs and limit to 6
