@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
+import { apiUrl } from '@/lib/api-url'
 import JobCard from '@/components/jobs/JobCard'
 import styles from './page.module.css'
 import { useTranslations } from 'next-intl'
@@ -39,7 +40,7 @@ export default function JobsPage() {
 
     const fetchJobs = async () => {
         try {
-            const response = await fetch('/api/jobs')
+            const response = await fetch(apiUrl('/jobs'))
             if (response.ok) {
                 const data = await response.json()
                 setJobs(data)

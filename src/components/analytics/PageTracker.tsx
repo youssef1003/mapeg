@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import { usePathname } from 'next/navigation'
+import { apiUrl } from '@/lib/api-url'
 
 export default function PageTracker() {
     const pathname = usePathname()
@@ -10,7 +11,7 @@ export default function PageTracker() {
         // Track page view
         const trackPageView = async () => {
             try {
-                await fetch('/api/analytics/track', {
+                await fetch(apiUrl('/analytics/track'), {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

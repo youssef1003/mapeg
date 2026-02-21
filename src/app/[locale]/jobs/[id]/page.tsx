@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Link, useRouter } from '@/navigation'
 import { useParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
+import { apiUrl } from '@/lib/api-url'
 import { getCountryLabel, getCategoryLabel, getJobTypeLabel } from '@/constants/taxonomy'
 import styles from './page.module.css'
 
@@ -50,7 +51,7 @@ export default function JobDetailPage() {
 
     const fetchJob = async () => {
         try {
-            const response = await fetch(`/api/jobs/${jobId}`)
+            const response = await fetch(apiUrl(`/jobs/${jobId}`))
             if (response.ok) {
                 const data = await response.json()
                 setJob(data)
@@ -69,7 +70,7 @@ export default function JobDetailPage() {
         
         try {
             // Check if user is logged in first
-            const sessionResponse = await fetch('/api/auth/check-session', {
+            const sessionResponse = await fetch(apiUrl('/auth/check-session'), {
                 credentials: 'include'
             })
             
@@ -93,7 +94,7 @@ export default function JobDetailPage() {
             }
             
             // Submit application (only jobId and coverLetter)
-            const response = await fetch('/api/applications', {
+            const response = await fetch(apiUrl('/applications'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

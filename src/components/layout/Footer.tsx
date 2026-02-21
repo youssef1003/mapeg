@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from '@/navigation'
 import { useTranslations } from 'next-intl'
+import { apiUrl } from '@/lib/api-url'
 import styles from './Footer.module.css'
 
 interface SiteSettings {
@@ -24,7 +25,7 @@ export default function Footer() {
 
     const fetchSettings = async () => {
         try {
-            const response = await fetch('/api/admin/settings', { cache: 'no-store' })
+            const response = await fetch(apiUrl('/admin/settings'), { cache: 'no-store' })
             if (response.ok) {
                 const data = await response.json()
                 setSettings(data)
