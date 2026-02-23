@@ -1,7 +1,7 @@
 # 🔥 Backend Hotfix: check-session Route + Middleware Rewrite
 
 ## 🎯 Problem
-Production issue: `/api/auth/check-session` was returning 404, causing "Auth check failed" errors in Header component. Additionally, some requests were going to `/ar/api/*` and `/en/api/*` paths, resulting in 404/405 errors.
+Production issue: `/api/auth/check-session` was returning 404, causing "Auth check failed" errors in Header component. Additionally, after login, cookies (`user_session` and `user_role`) were being set but the endpoint was returning `isLoggedIn: false`.
 
 ## ✅ Solution (Backend Only - No UI Changes)
 
@@ -12,8 +12,13 @@ Production issue: `/api/auth/check-session` was returning 404, causing "Auth che
 **Features**:
 - ✅ Supports GET method
 - ✅ Always returns 200 status (never 404)
+- ✅ Reads cookies: `user_session` and `user_role`
+- ✅ Fetches user data from Prisma based on role:
+  - `CANDIDATE` → `candidates` table
+  - `EMPLOYER` → `employers` table
+  - `ADMIN` → `admins` table
 - ✅ Returns JSON with authentication status
-- ✅ Uses existing JWT/session utilities from `src/lib/auth.ts`
+- ✅ No-store caching with proper headers
 
 **Response Format**:
 ```typescript
@@ -36,6 +41,19 @@ Production issue: `/api/auth/check-session` was returning 404, causing "Auth che
   isLoggedIn: false,
   isAdmin: false,
   user: null
+}
+```
+
+**Cache Control**:
+```typescript
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+export const revalidate = 0
+
+headers: {
+  'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+  'Pragma': 'no-cache',
+  'Expires': '0'
 }
 ```
 
@@ -90,7 +108,7 @@ matcher: [
 ## 📦 Changes Summary
 
 ### Files Modified:
-1. ✅ `src/app/api/auth/check-session/route.ts` (NEW)
+1. ✅ `src/app/api/auth/check-session/route.ts` (NEW - Updated to read cookies)
 2. ✅ `src/middleware.ts` (MODIFIED)
 3. ✅ `src/app/api/analytics/track/route.ts` (MODIFIED)
 
@@ -115,6 +133,8 @@ matcher: [
    ```
    GET https://mapeg-nine.vercel.app/api/auth/check-session
    → 200 OK with JSON response
+   → If logged in: isLoggedIn: true with user data
+   → If not logged in: isLoggedIn: false
    ```
 
 2. **Localized API Call (Rewritten)**:
@@ -131,6 +151,10 @@ matcher: [
 4. **Localized API Requests**:
    - ❌ Before: `/ar/api/*` → 404 errors
    - ✅ After: `/ar/api/*` → Rewritten to `/api/*` → Success
+
+5. **Login Flow**:
+   - ❌ Before: Cookies set but `isLoggedIn: false`
+   - ✅ After: Cookies read correctly, `isLoggedIn: true` with user data
 
 ---
 
@@ -150,14 +174,20 @@ matcher: [
    # Should return 200 (rewritten to /api/auth/check-session)
    ```
 
-3. **Test in browser**:
+3. **Test login flow**:
+   - Login as candidate/employer/admin
+   - Verify cookies are set: `user_session`, `user_role`
+   - Call `/api/auth/check-session`
+   - Verify response has `isLoggedIn: true` with user data
+
+4. **Test in browser**:
    - Open https://mapeg-nine.vercel.app/ar
    - Open DevTools → Console
    - Verify NO "Auth check failed" errors
    - Verify NO `/ar/api/*` 404 errors
    - All API requests should succeed
 
-4. **Test analytics**:
+5. **Test analytics**:
    - Verify page tracking works
    - No 405 errors in console
 
@@ -166,7 +196,10 @@ matcher: [
 ## 🚀 Deployment
 
 **Branch**: `hotfix/backend-check-session-rewrite`
-**Commit**: `91a5906`
+**Commits**: 
+- `91a5906` - Initial check-session route
+- `3db3661` - Documentation
+- `0011b9a` - Fix cookie reading logic
 **Status**: ✅ Ready to merge to `main`
 
 **Next Steps**:
@@ -184,17 +217,22 @@ matcher: [
 
 ### Fixed Issues:
 1. ✅ `/api/auth/check-session` now returns 200 (not 404)
-2. ✅ Header component auth check works correctly
-3. ✅ Localized API paths (`/ar/api/*`, `/en/api/*`) automatically rewritten
-4. ✅ No more 404/405 errors from localized API calls
-5. ✅ Clean console with no auth errors
-6. ✅ Analytics tracking works without 405 errors
+2. ✅ Endpoint reads `user_session` and `user_role` cookies correctly
+3. ✅ Returns `isLoggedIn: true` when user is authenticated
+4. ✅ Fetches user data from correct Prisma tables based on role
+5. ✅ Header component auth check works correctly
+6. ✅ Localized API paths (`/ar/api/*`, `/en/api/*`) automatically rewritten
+7. ✅ No more 404/405 errors from localized API calls
+8. ✅ Clean console with no auth errors
+9. ✅ Analytics tracking works without 405 errors
+10. ✅ Proper no-store caching headers
 
 ### Technical Benefits:
 - Middleware safety net prevents future localized API issues
 - Always returns 200 for better error handling
 - No breaking changes to existing code
 - Backward compatible with all existing API calls
+- Proper cache control for session checks
 
 ---
 
