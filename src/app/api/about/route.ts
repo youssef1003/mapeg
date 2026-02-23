@@ -1,49 +1,83 @@
 import { NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-// Prisma Lazy (ما يتعملش وقت import)
-async function getPrisma() {
-  const { PrismaClient } = await import("@prisma/client");
-
-  const g = globalThis as unknown as { __prisma?: any };
-  if (!g.__prisma) {
-    g.__prisma = new PrismaClient();
-  }
-  return g.__prisma;
-}
-
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const prisma = await getPrisma();
+    // اقرأ الكوكيز من الهيدر مباشرة (أضمن من cookies() في بعض حالات Vercel)
+    const cookieHeader = request.headers.get("cookie") || "";
 
-    const [content, values, milestones, team, offices] = await Promise.all([
-      prisma.aboutPageContent.findUnique({ where: { id: "main" } }),
-      prisma.aboutValue.findMany({ orderBy: { order: "asc" } }),
-      prisma.aboutMilestone.findMany({ orderBy: { order: "asc" } }),
-      prisma.aboutTeamMember.findMany({ orderBy: { order: "asc" } }),
-      prisma.aboutOffice.findMany({ orderBy: { order: "asc" } }),
-    ]);
+    const getCookie = (name: string) => {
+      const match = cookieHeader
+        .split(";")
+        .map(s => s.trim())
+        .find(c => c.startsWith(name + "="));
+      return match ? decodeURIComponent(match.split("=").slice(1).join("=")) : null;
+    };
+
+    const userId = getCookie("user_session");
+    const role = getCookie("user_role");
+
+    if (!userId) {
+      return NextResponse.json({
+        authenticated: false,
+        isLoggedIn: false,
+        isAdmin: false,
+        user: null,
+      });
+    }
+
+    // نحاول نجيب المستخدم من أي جدول موجود (User / Candidate / Employer / Admin)
+    const p: any = prisma;
+
+    const user =
+      (await p.user?.findUnique?.({
+        where: { id: userId },
+        select: { id: true, name: true, email: true, role: true },
+      })) ||
+      (await p.candidate?.findUnique?.({
+        where: { id: userId },
+        select: { id: true, name: true, email: true },
+      })) ||
+      (await p.employer?.findUnique?.({
+        where: { id: userId },
+        select: { id: true, name: true, email: true },
+      })) ||
+      (await p.admin?.findUnique?.({
+        where: { id: userId },
+        select: { id: true, name: true, email: true },
+      }));
+
+    if (!user) {
+      // كوكي موجود بس مش لاقيينه في DB (كوكي قديم/غلط)
+      return NextResponse.json({
+        authenticated: false,
+        isLoggedIn: false,
+        isAdmin: false,
+        user: null,
+      });
+    }
+
+    const finalRole = (user.role || role || "").toString();
+    const isAdmin = finalRole === "ADMIN";
 
     return NextResponse.json({
-      content,
-      values,
-      milestones,
-      team,
-      offices,
+      authenticated: true,
+      isLoggedIn: true,
+      isAdmin,
+      user: { ...user, role: finalRole },
     });
-  } catch (error) {
-    console.error("Error fetching about page:", error);
-
-    // مهم: ما نرجّعش 500 عشان ما يوقعش build
+  } catch (e) {
+    console.error("check-session error:", e);
+    // رجّع 200 عشان الهيدر مايفضلش يبوظ الصفحة
     return NextResponse.json({
-      content: null,
-      values: [],
-      milestones: [],
-      team: [],
-      offices: [],
+      authenticated: false,
+      isLoggedIn: false,
+      isAdmin: false,
+      user: null,
     });
   }
 }
