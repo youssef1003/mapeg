@@ -23,13 +23,13 @@ export default function LoginPage() {
         setError('')
         setIsLoading(true)
 
-        // Try User Login via API
         try {
             const response = await fetch(apiUrl('/auth/login'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                credentials: 'include',
                 body: JSON.stringify({
                     email: formData.email,
                     password: formData.password,
@@ -39,15 +39,35 @@ export default function LoginPage() {
             const data = await response.json()
 
             if (response.ok) {
-                // Cookies are set by the API (httpOnly)
-                // Check if admin or regular user and redirect accordingly
+                // Trigger auth-changed event for Header
+                window.dispatchEvent(new Event('auth-changed'))
+                
+                // Get current locale
                 const currentLocale = window.location.pathname.split('/')[1] || 'ar'
-                const redirectPath = data.isAdmin ? `/${currentLocale}/admin` : `/${currentLocale}`
+                
+                // Redirect based on role
+                let redirectPath = `/${currentLocale}`
+                
+                if (data.user && data.user.role) {
+                    if (data.user.role === 'ADMIN') {
+                        redirectPath = `/${currentLocale}/admin`
+                    } else if (data.user.role === 'EMPLOYER') {
+                        redirectPath = `/${currentLocale}/employers/jobs`
+                    } else if (data.user.role === 'CANDIDATE') {
+                        redirectPath = `/${currentLocale}/jobs`
+                    }
+                } else if (data.isAdmin) {
+                    // Fallback for old response format
+                    redirectPath = `/${currentLocale}/admin`
+                }
+                
+                // Full page reload to ensure cookies are set
                 window.location.href = redirectPath
             } else {
-                setError(t('invalidCredentials'))
+                setError(data.error || t('invalidCredentials'))
             }
-        } catch {
+        } catch (error) {
+            console.error('Login error:', error)
             setError(t('invalidCredentials'))
         } finally {
             setIsLoading(false)
