@@ -12,6 +12,7 @@ export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [userRole, setUserRole] = useState<string | null>(null)
+    const [userName, setUserName] = useState<string | null>(null)
     const t = useTranslations('Navigation')
     const params = useParams()
     const router = useRouter()
@@ -27,22 +28,30 @@ export default function Header() {
                 if (response.ok) {
                     const data = await response.json()
                     console.log('[Header] Auth check:', data)
-                    setIsLoggedIn(data.isLoggedIn)
-                    // If isAdmin is true, set role to ADMIN, otherwise use userRole from response
-                    if (data.isAdmin) {
+                    setIsLoggedIn(data.isLoggedIn || data.authenticated)
+                    
+                    // Get role and name from user object
+                    if (data.user && data.user.role) {
+                        setUserRole(data.user.role)
+                        setUserName(data.user.name)
+                    } else if (data.isAdmin) {
                         setUserRole('ADMIN')
+                        setUserName('Admin')
                     } else {
-                        setUserRole(data.userRole)
+                        setUserRole(null)
+                        setUserName(null)
                     }
                 } else {
                     console.log('[Header] Auth check failed')
                     setIsLoggedIn(false)
                     setUserRole(null)
+                    setUserName(null)
                 }
             } catch (error) {
                 console.error('Auth check failed:', error)
                 setIsLoggedIn(false)
                 setUserRole(null)
+                setUserName(null)
             }
         }
         
@@ -63,28 +72,21 @@ export default function Header() {
     const handleLogout = async () => {
         const currentLocale = window.location.pathname.split('/')[1] || 'ar'
         
-        // Check if admin
-        if (userRole === 'ADMIN') {
-            // Admin logout - call admin logout API
-            try {
-                await fetch(apiUrl('/admin/logout'), { method: 'POST' })
-            } catch (error) {
-                console.error('Logout error:', error)
-            }
-            
-            // Redirect with full page reload
-            window.location.href = `/${currentLocale}`
-        } else {
-            // Normal user logout - call user logout API
-            try {
-                await fetch(apiUrl('/auth/logout'), { method: 'POST' })
-            } catch (error) {
-                console.error('Logout error:', error)
-            }
-            
-            // Redirect with full page reload
-            window.location.href = `/${currentLocale}`
+        try {
+            // Call logout API (works for all roles)
+            await fetch(apiUrl('/auth/logout'), { 
+                method: 'POST',
+                credentials: 'include'
+            })
+        } catch (error) {
+            console.error('Logout error:', error)
         }
+        
+        // Trigger auth-changed event
+        window.dispatchEvent(new Event('auth-changed'))
+        
+        // Redirect to home with full page reload
+        window.location.href = `/${currentLocale}`
     }
 
     const handleDashboardClick = () => {
@@ -168,11 +170,13 @@ export default function Header() {
                             </button>
                         </>
                     ) : isLoggedIn && (userRole === 'CANDIDATE' || userRole === 'EMPLOYER') ? (
-                        // Logged in user: show Logout only
+                        // Logged in user: show name + Logout
                         <>
-                            <span style={{ marginLeft: '1rem', color: '#666' }}>
-                                مرحباً، {userRole === 'CANDIDATE' ? 'مرشح' : 'صاحب عمل'}
-                            </span>
+                            {userName && (
+                                <span style={{ marginLeft: '1rem', color: '#666', fontSize: '14px' }}>
+                                    مرحباً، {userName}
+                                </span>
+                            )}
                             <button onClick={handleLogout} className="btn btn-primary">
                                 {t('logout')}
                             </button>
