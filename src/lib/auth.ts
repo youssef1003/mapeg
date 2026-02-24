@@ -64,9 +64,53 @@ export async function requireEmployer(request: NextRequest): Promise<SessionPayl
 
 // دالة مساعدة للتحقق من Candidate
 export async function requireCandidate(request: NextRequest): Promise<SessionPayload | null> {
+  // First try JWT session
   const session = await requireAuth(request)
-  if (!session || (session.role !== 'CANDIDATE' && session.role !== 'ADMIN')) {
-    return null
+  if (session && (session.role === 'CANDIDATE' || session.role === 'ADMIN')) {
+    return session
   }
-  return session
+  
+  // Fallback: Check old user_session cookie
+  const userSession = request.cookies.get('user_session')?.value
+  const userRole = request.cookies.get('user_role')?.value
+  
+  if (userSession && (userRole === 'CANDIDATE' || userRole === 'ADMIN')) {
+    // Try to get user from database
+    const prisma = (await import('@prisma/client')).PrismaClient
+    const db = new prisma()
+    
+    try {
+      // Try to find in User table first
+      let user = await db.user.findUnique({
+        where: { id: userSession },
+        select: { id: true, name: true, email: true, role: true }
+      })
+      
+      // If not found, try Candidate table
+      if (!user) {
+        const candidate = await db.candidate.findUnique({
+          where: { id: userSession },
+          select: { id: true, name: true, email: true }
+        })
+        
+        if (candidate) {
+          user = { ...candidate, role: 'CANDIDATE' as any }
+        }
+      }
+      
+      if (user && (user.role === 'CANDIDATE' || user.role === 'ADMIN')) {
+        return {
+          sub: user.id,
+          role: user.role as 'CANDIDATE' | 'ADMIN',
+          name: user.name || '',
+          email: user.email,
+          exp: Date.now() + 7 * 24 * 60 * 60 * 1000
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching user from database:', error)
+    }
+  }
+  
+  return null
 }
