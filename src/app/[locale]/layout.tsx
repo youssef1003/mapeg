@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import PageTracker from '@/components/analytics/PageTracker'
+import { ToastProvider } from '@/contexts/ToastContext'
 import '@/app/globals.css'
 import type { Metadata } from 'next'
 
@@ -97,10 +98,12 @@ export default async function LocaleLayout({
       </head>
       <body>
         <NextIntlClientProvider messages={messages}>
-          <PageTracker />
-          <Header />
-          <main style={{ minHeight: '60vh' }}>{children}</main>
-          <Footer />
+          <ToastProvider>
+            <PageTracker />
+            <Header />
+            <main style={{ minHeight: '60vh' }}>{children}</main>
+            <Footer />
+          </ToastProvider>
         </NextIntlClientProvider>
       </body>
     </html>

@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useToast } from '@/contexts/ToastContext'
+import LoadingSpinner from '@/components/common/LoadingSpinner'
 import styles from '../admin.module.css'
 import pageStyles from './page.module.css'
 
@@ -29,6 +31,7 @@ interface SiteSettings {
 export default function AdminSettingsPage() {
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
+    const toast = useToast()
     const [settings, setSettings] = useState<SiteSettings>({
         siteName: '',
         siteEmail: '',
@@ -111,17 +114,17 @@ export default function AdminSettingsPage() {
             if (response.ok) {
                 const data = await response.json()
                 console.log('✅ تم الحفظ بنجاح:', data)
-                alert('✅ تم حفظ الإعدادات بنجاح!')
+                toast.success('تم حفظ الإعدادات بنجاح!')
                 // Re-fetch settings to ensure UI shows persisted values
                 await fetchSettings()
             } else {
                 const error = await response.json()
                 console.error('❌ فشل الحفظ:', error)
-                throw new Error(error.error || 'Failed to save settings')
+                toast.error('فشل حفظ الإعدادات: ' + (error.error || 'خطأ غير معروف'))
             }
         } catch (error) {
             console.error('❌ خطأ في الحفظ:', error)
-            alert('❌ حدث خطأ أثناء حفظ الإعدادات: ' + (error instanceof Error ? error.message : 'خطأ غير معروف'))
+            toast.error('حدث خطأ أثناء حفظ الإعدادات')
         } finally {
             setSaving(false)
             console.log('🔵 انتهت عملية الحفظ')
@@ -351,8 +354,16 @@ export default function AdminSettingsPage() {
                     className="btn btn-primary"
                     onClick={handleSave}
                     disabled={saving}
+                    style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
                 >
-                    {saving ? '⏳ جاري الحفظ...' : '💾 حفظ الإعدادات'}
+                    {saving ? (
+                        <>
+                            <LoadingSpinner size="small" color="white" />
+                            <span>جاري الحفظ...</span>
+                        </>
+                    ) : (
+                        <>💾 حفظ الإعدادات</>
+                    )}
                 </button>
             </div>
         </>
