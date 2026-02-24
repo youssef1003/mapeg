@@ -5,79 +5,45 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
-    // اقرأ الكوكيز من الهيدر مباشرة (أضمن من cookies() في بعض حالات Vercel)
-    const cookieHeader = request.headers.get("cookie") || "";
+    // Fetch about page content
+    const content = await prisma.aboutPageContent.findUnique({
+      where: { id: 'main' }
+    })
 
-    const getCookie = (name: string) => {
-      const match = cookieHeader
-        .split(";")
-        .map(s => s.trim())
-        .find(c => c.startsWith(name + "="));
-      return match ? decodeURIComponent(match.split("=").slice(1).join("=")) : null;
-    };
+    // Fetch values
+    const values = await prisma.aboutValue.findMany({
+      orderBy: { order: 'asc' }
+    })
 
-    const userId = getCookie("user_session");
-    const role = getCookie("user_role");
+    // Fetch milestones
+    const milestones = await prisma.aboutMilestone.findMany({
+      orderBy: { order: 'asc' }
+    })
 
-    if (!userId) {
-      return NextResponse.json({
-        authenticated: false,
-        isLoggedIn: false,
-        isAdmin: false,
-        user: null,
-      });
-    }
+    // Fetch team members
+    const team = await prisma.aboutTeamMember.findMany({
+      orderBy: { order: 'asc' }
+    })
 
-    // نحاول نجيب المستخدم من أي جدول موجود (User / Candidate / Employer / Admin)
-    const p: any = prisma;
-
-    const user =
-      (await p.user?.findUnique?.({
-        where: { id: userId },
-        select: { id: true, name: true, email: true, role: true },
-      })) ||
-      (await p.candidate?.findUnique?.({
-        where: { id: userId },
-        select: { id: true, name: true, email: true },
-      })) ||
-      (await p.employer?.findUnique?.({
-        where: { id: userId },
-        select: { id: true, name: true, email: true },
-      })) ||
-      (await p.admin?.findUnique?.({
-        where: { id: userId },
-        select: { id: true, name: true, email: true },
-      }));
-
-    if (!user) {
-      // كوكي موجود بس مش لاقيينه في DB (كوكي قديم/غلط)
-      return NextResponse.json({
-        authenticated: false,
-        isLoggedIn: false,
-        isAdmin: false,
-        user: null,
-      });
-    }
-
-    const finalRole = (user.role || role || "").toString();
-    const isAdmin = finalRole === "ADMIN";
+    // Fetch offices
+    const offices = await prisma.aboutOffice.findMany({
+      orderBy: { order: 'asc' }
+    })
 
     return NextResponse.json({
-      authenticated: true,
-      isLoggedIn: true,
-      isAdmin,
-      user: { ...user, role: finalRole },
-    });
-  } catch (e) {
-    console.error("check-session error:", e);
-    // رجّع 200 عشان الهيدر مايفضلش يبوظ الصفحة
-    return NextResponse.json({
-      authenticated: false,
-      isLoggedIn: false,
-      isAdmin: false,
-      user: null,
-    });
+      content,
+      values,
+      milestones,
+      team,
+      offices
+    })
+  } catch (error) {
+    console.error("Error fetching about page:", error);
+    return NextResponse.json(
+      { error: 'Failed to fetch about page content' },
+      { status: 500 }
+    )
   }
 }
