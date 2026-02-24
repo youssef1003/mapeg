@@ -16,6 +16,9 @@ export default function Header() {
     const t = useTranslations('Navigation')
     const params = useParams()
     const router = useRouter()
+    
+    // Get current locale from params or default to 'ar'
+    const currentLocale = (params?.locale as string) || 'ar'
 
     useEffect(() => {
         // Check auth state via API (works with httpOnly cookies)
@@ -174,13 +177,13 @@ export default function Header() {
                         <>
                             {userName && (
                                 <span style={{ 
-                                    marginLeft: params.locale === 'ar' ? '1rem' : '0',
-                                    marginRight: params.locale === 'en' ? '1rem' : '0',
+                                    marginLeft: currentLocale === 'ar' ? '1rem' : '0',
+                                    marginRight: currentLocale === 'en' ? '1rem' : '0',
                                     color: '#1e40af', 
                                     fontSize: '15px',
                                     fontWeight: '500'
                                 }}>
-                                    {params.locale === 'ar' ? `مرحباً، ${userName}` : `Hello, ${userName}`}
+                                    {currentLocale === 'ar' ? `مرحباً، ${userName}` : `Hello, ${userName}`}
                                 </span>
                             )}
                             <button onClick={handleLogout} className="btn btn-primary">
