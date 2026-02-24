@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
+import { requireAdmin } from '@/lib/auth'
+
+export const dynamic = 'force-dynamic'
 
 // GET - Fetch site settings
 export async function GET() {
@@ -42,10 +45,15 @@ export async function GET() {
 
 // PUT - Update site settings (Admin only)
 export async function PUT(request: NextRequest) {
-    const { requireAdmin } = await import('@/lib/auth')
+    console.log('[Settings API] PUT request received')
+    
     const session = await requireAdmin(request)
+    
+    console.log('[Settings API] Auth check result:', session ? 'authorized' : 'unauthorized')
+    
     if (!session) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        console.log('[Settings API] Unauthorized - no valid session')
+        return NextResponse.json({ error: 'Unauthorized - Admin access required' }, { status: 401 })
     }
 
     try {
