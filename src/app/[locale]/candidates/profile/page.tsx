@@ -92,15 +92,19 @@ export default function CandidateProfilePage() {
     const file = e.target.files?.[0]
     if (!file) return
 
+    console.log('📤 Starting CV upload...', file.name)
+
     // Validate file type
     const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
     if (!allowedTypes.includes(file.type)) {
+      console.log('❌ Invalid file type:', file.type)
       toast.error(locale === 'ar' ? 'يرجى رفع ملف PDF أو Word فقط' : 'Please upload PDF or Word file only')
       return
     }
 
     // Validate file size (5MB)
     if (file.size > 5 * 1024 * 1024) {
+      console.log('❌ File too large:', file.size)
       toast.error(locale === 'ar' ? 'حجم الملف يجب أن يكون أقل من 5 ميجابايت' : 'File size must be less than 5MB')
       return
     }
@@ -110,21 +114,27 @@ export default function CandidateProfilePage() {
     formData.append('cv', file)
 
     try {
+      console.log('📤 Sending request to /api/upload/cv')
       const response = await fetch('/api/upload/cv', {
         method: 'POST',
         credentials: 'include',
         body: formData,
       })
 
+      console.log('📥 Response status:', response.status)
+      
       if (response.ok) {
         const data = await response.json()
+        console.log('✅ Upload successful:', data)
         setProfile(prev => prev ? { ...prev, cvFilePath: data.filePath } : null)
         toast.success(locale === 'ar' ? 'تم رفع السيرة الذاتية بنجاح!' : 'CV uploaded successfully!')
       } else {
-        toast.error(locale === 'ar' ? 'فشل رفع السيرة الذاتية' : 'Failed to upload CV')
+        const errorData = await response.json()
+        console.error('❌ Upload failed:', errorData)
+        toast.error(locale === 'ar' ? `فشل رفع السيرة الذاتية: ${errorData.error}` : `Failed to upload CV: ${errorData.error}`)
       }
     } catch (error) {
-      console.error('Error uploading CV:', error)
+      console.error('❌ Error uploading CV:', error)
       toast.error(locale === 'ar' ? 'حدث خطأ أثناء الرفع' : 'Error uploading CV')
     } finally {
       setUploadingCV(false)
@@ -135,14 +145,18 @@ export default function CandidateProfilePage() {
     const file = e.target.files?.[0]
     if (!file) return
 
+    console.log('📤 Starting image upload...', file.name)
+
     // Validate file type
     if (!file.type.startsWith('image/')) {
+      console.log('❌ Invalid file type:', file.type)
       toast.error(locale === 'ar' ? 'يرجى رفع صورة فقط' : 'Please upload an image only')
       return
     }
 
     // Validate file size (2MB)
     if (file.size > 2 * 1024 * 1024) {
+      console.log('❌ File too large:', file.size)
       toast.error(locale === 'ar' ? 'حجم الصورة يجب أن يكون أقل من 2 ميجابايت' : 'Image size must be less than 2MB')
       return
     }
@@ -152,21 +166,27 @@ export default function CandidateProfilePage() {
     formData.append('image', file)
 
     try {
+      console.log('📤 Sending request to /api/upload/profile-image')
       const response = await fetch('/api/upload/profile-image', {
         method: 'POST',
         credentials: 'include',
         body: formData,
       })
 
+      console.log('📥 Response status:', response.status)
+
       if (response.ok) {
         const data = await response.json()
+        console.log('✅ Upload successful:', data)
         setProfile(prev => prev ? { ...prev, profileImage: data.imageUrl } : null)
         toast.success(locale === 'ar' ? 'تم رفع الصورة بنجاح!' : 'Image uploaded successfully!')
       } else {
-        toast.error(locale === 'ar' ? 'فشل رفع الصورة' : 'Failed to upload image')
+        const errorData = await response.json()
+        console.error('❌ Upload failed:', errorData)
+        toast.error(locale === 'ar' ? `فشل رفع الصورة: ${errorData.error}` : `Failed to upload image: ${errorData.error}`)
       }
     } catch (error) {
-      console.error('Error uploading image:', error)
+      console.error('❌ Error uploading image:', error)
       toast.error(locale === 'ar' ? 'حدث خطأ أثناء الرفع' : 'Error uploading image')
     } finally {
       setUploadingImage(false)
