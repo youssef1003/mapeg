@@ -55,10 +55,14 @@ export async function GET(request: NextRequest) {
 
 // PUT - Update candidate profile
 export async function PUT(request: NextRequest) {
+  console.log('📝 PUT /api/candidates/profile - Starting update...')
+  
   try {
     const session = await requireCandidate(request)
+    console.log('🔐 Session:', session ? 'Valid' : 'Invalid')
     
     if (!session) {
+      console.log('❌ Unauthorized - No valid session')
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -66,6 +70,8 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json()
+    console.log('📦 Received data:', body)
+    
     const {
       name,
       phone,
@@ -78,11 +84,32 @@ export async function PUT(request: NextRequest) {
 
     // Validate required fields
     if (!name || !phone || !skills) {
+      console.log('❌ Missing required fields')
       return NextResponse.json(
         { error: 'Name, phone, and skills are required' },
         { status: 400 }
       )
     }
+
+    // Parse yearsOfExperience safely
+    let parsedYears = null
+    if (yearsOfExperience !== null && yearsOfExperience !== undefined && yearsOfExperience !== '') {
+      parsedYears = parseInt(String(yearsOfExperience))
+      if (isNaN(parsedYears)) {
+        parsedYears = null
+      }
+    }
+
+    console.log('📝 Updating candidate for email:', session.email)
+    console.log('📝 Data to update:', {
+      name,
+      phone,
+      profession: profession || null,
+      yearsOfExperience: parsedYears,
+      city: city || null,
+      skills,
+      summary: summary || null
+    })
 
     // Update candidate
     const updatedCandidate = await prisma.candidate.update({
@@ -91,7 +118,7 @@ export async function PUT(request: NextRequest) {
         name,
         phone,
         profession: profession || null,
-        yearsOfExperience: yearsOfExperience ? parseInt(yearsOfExperience) : null,
+        yearsOfExperience: parsedYears,
         city: city || null,
         skills,
         summary: summary || null,
@@ -112,11 +139,12 @@ export async function PUT(request: NextRequest) {
       }
     })
 
+    console.log('✅ Candidate updated successfully')
     return NextResponse.json(updatedCandidate)
   } catch (error) {
-    console.error('Error updating candidate profile:', error)
+    console.error('❌ Error updating candidate profile:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     )
   }
