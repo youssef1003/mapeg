@@ -58,7 +58,8 @@ export default function AdminSettingsPage() {
     const fetchSettings = async () => {
         try {
             const response = await fetch('/api/admin/settings', {
-                cache: 'no-store'
+                cache: 'no-store',
+                credentials: 'include' // مهم جداً لإرسال cookies
             })
             if (response.ok) {
                 const data = await response.json()
@@ -92,6 +93,8 @@ export default function AdminSettingsPage() {
     }
 
     const handleSave = async () => {
+        console.log('🔵 بدء عملية الحفظ...')
+        console.log('📦 البيانات المراد حفظها:', settings)
         setSaving(true)
         try {
             const response = await fetch('/api/admin/settings', {
@@ -99,21 +102,29 @@ export default function AdminSettingsPage() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                credentials: 'include', // مهم جداً لإرسال cookies
                 body: JSON.stringify(settings),
             })
 
+            console.log('📥 استجابة السيرفر:', response.status, response.statusText)
+            
             if (response.ok) {
+                const data = await response.json()
+                console.log('✅ تم الحفظ بنجاح:', data)
                 alert('✅ تم حفظ الإعدادات بنجاح!')
                 // Re-fetch settings to ensure UI shows persisted values
                 await fetchSettings()
             } else {
-                throw new Error('Failed to save settings')
+                const error = await response.json()
+                console.error('❌ فشل الحفظ:', error)
+                throw new Error(error.error || 'Failed to save settings')
             }
         } catch (error) {
-            console.error('Error saving settings:', error)
-            alert('❌ حدث خطأ أثناء حفظ الإعدادات. حاول مرة أخرى.')
+            console.error('❌ خطأ في الحفظ:', error)
+            alert('❌ حدث خطأ أثناء حفظ الإعدادات: ' + (error instanceof Error ? error.message : 'خطأ غير معروف'))
         } finally {
             setSaving(false)
+            console.log('🔵 انتهت عملية الحفظ')
         }
     }
 
