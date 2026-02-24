@@ -29,11 +29,28 @@ export function requireRole(
 
 // دالة مساعدة للتحقق من Admin
 export async function requireAdmin(request: NextRequest): Promise<SessionPayload | null> {
+  // First try JWT session
   const session = await requireAuth(request)
-  if (!session || session.role !== 'ADMIN') {
-    return null
+  if (session && session.role === 'ADMIN') {
+    return session
   }
-  return session
+  
+  // Fallback: Check old admin_session cookie
+  const adminSession = request.cookies.get('admin_session')?.value
+  const userRole = request.cookies.get('user_role')?.value
+  
+  if (adminSession && userRole === 'ADMIN') {
+    // Return a mock session for backward compatibility
+    return {
+      sub: 'admin',
+      role: 'ADMIN',
+      name: 'Super Admin',
+      email: process.env.ADMIN_EMAIL || 'admin@mapeg.com',
+      exp: Date.now() + 7 * 24 * 60 * 60 * 1000 // 7 days
+    }
+  }
+  
+  return null
 }
 
 // دالة مساعدة للتحقق من Employer

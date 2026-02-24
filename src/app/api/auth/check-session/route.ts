@@ -52,27 +52,59 @@ export async function GET(request: NextRequest) {
 
     // Fetch user data based on role
     if (userRole === 'CANDIDATE') {
-      const candidate = await prisma.candidate.findUnique({
-        where: { id: sessionId }
+      // First try User table
+      const userRecord = await prisma.user.findUnique({
+        where: { id: sessionId },
+        include: { candidate: true }
       })
-      if (candidate) {
+      
+      if (userRecord && userRecord.role === 'CANDIDATE') {
         user = {
-          id: candidate.id,
-          name: candidate.name,
-          email: candidate.email,
+          id: userRecord.id,
+          name: userRecord.name || userRecord.candidate?.name || 'User',
+          email: userRecord.email,
           role: 'CANDIDATE'
+        }
+      } else {
+        // Fallback to Candidate table
+        const candidate = await prisma.candidate.findUnique({
+          where: { id: sessionId }
+        })
+        if (candidate) {
+          user = {
+            id: candidate.id,
+            name: candidate.name,
+            email: candidate.email,
+            role: 'CANDIDATE'
+          }
         }
       }
     } else if (userRole === 'EMPLOYER') {
-      const employer = await prisma.employer.findUnique({
-        where: { id: sessionId }
+      // First try User table
+      const userRecord = await prisma.user.findUnique({
+        where: { id: sessionId },
+        include: { employer: true }
       })
-      if (employer) {
+      
+      if (userRecord && userRecord.role === 'EMPLOYER') {
         user = {
-          id: employer.id,
-          name: employer.companyName,
-          email: employer.email,
+          id: userRecord.id,
+          name: userRecord.name || userRecord.employer?.companyName || 'Company',
+          email: userRecord.email,
           role: 'EMPLOYER'
+        }
+      } else {
+        // Fallback to Employer table
+        const employer = await prisma.employer.findUnique({
+          where: { id: sessionId }
+        })
+        if (employer) {
+          user = {
+            id: employer.id,
+            name: employer.companyName,
+            email: employer.email,
+            role: 'EMPLOYER'
+          }
         }
       }
     } else if (userRole === 'ADMIN') {
