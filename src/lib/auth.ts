@@ -76,27 +76,36 @@ export async function requireCandidate(request: NextRequest): Promise<SessionPay
   
   if (userSession && (userRole === 'CANDIDATE' || userRole === 'ADMIN')) {
     // Try to get user from database
-    const prisma = (await import('@prisma/client')).PrismaClient
-    const db = new prisma()
-    
     try {
+      const { PrismaClient } = await import('@prisma/client')
+      const prisma = new PrismaClient()
+      
       // Try to find in User table first
-      let user = await db.user.findUnique({
+      let user = await prisma.user.findUnique({
         where: { id: userSession },
         select: { id: true, name: true, email: true, role: true }
       })
       
       // If not found, try Candidate table
       if (!user) {
-        const candidate = await db.candidate.findUnique({
+        const candidate = await prisma.candidate.findUnique({
           where: { id: userSession },
           select: { id: true, name: true, email: true }
         })
         
         if (candidate) {
-          user = { ...candidate, role: 'CANDIDATE' as any }
+          await prisma.$disconnect()
+          return {
+            sub: candidate.id,
+            role: 'CANDIDATE',
+            name: candidate.name || '',
+            email: candidate.email,
+            exp: Date.now() + 7 * 24 * 60 * 60 * 1000
+          }
         }
       }
+      
+      await prisma.$disconnect()
       
       if (user && (user.role === 'CANDIDATE' || user.role === 'ADMIN')) {
         return {
