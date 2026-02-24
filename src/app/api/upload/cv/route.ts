@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireCandidate } from '@/lib/auth'
 import { PrismaClient } from '@prisma/client'
-import { put } from '@vercel/blob'
 
 const prisma = new PrismaClient()
 
@@ -66,22 +65,47 @@ export async function POST(request: NextRequest) {
     const fileExtension = file.name.split('.').pop()
     const fileName = `cv_${session.email.replace(/[^a-zA-Z0-9]/g, '_')}_${timestamp}.${fileExtension}`
     
-    console.log('💾 Uploading file to Vercel Blob:', fileName)
+    let cvUrl: string
 
-    // Upload to Vercel Blob
-    const blob = await put(fileName, file, {
-      access: 'public',
-      addRandomSuffix: false,
-    })
-    
-    console.log('✅ File uploaded successfully to:', blob.url)
+    // Check if we're on Vercel with Blob Storage
+    if (process.env.BLOB_READ_WRITE_TOKEN) {
+      console.log('💾 Uploading to Vercel Blob Storage...')
+      const { put } = await import('@vercel/blob')
+      
+      const blob = await put(fileName, file, {
+        access: 'public',
+        addRandomSuffix: false,
+      })
+      
+      cvUrl = blob.url
+      console.log('✅ File uploaded to Blob:', cvUrl)
+    } else {
+      // Fallback to local file system for development
+      console.log('💾 Saving to local file system...')
+      const { writeFile, mkdir } = await import('fs/promises')
+      const { join } = await import('path')
+      const { existsSync } = await import('fs')
+      
+      const uploadsDir = join(process.cwd(), 'public', 'uploads', 'cvs')
+      if (!existsSync(uploadsDir)) {
+        await mkdir(uploadsDir, { recursive: true })
+      }
+      
+      const filePath = join(uploadsDir, fileName)
+      const bytes = await file.arrayBuffer()
+      const buffer = Buffer.from(bytes)
+      await writeFile(filePath, buffer)
+      
+      cvUrl = `/uploads/cvs/${fileName}`
+      console.log('✅ File saved locally:', cvUrl)
+    }
 
     // Update candidate record
     console.log('📝 Updating database for email:', session.email)
     await prisma.candidate.update({
       where: { email: session.email },
       data: {
-        cvFilePath: blob.url,
+        cvFilePath: cvUrl,
         updatedAt: new Date()
       }
     })
@@ -89,7 +113,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      filePath: blob.url,
+      filePath: cvUrl,
       message: 'CV uploaded successfully'
     })
   } catch (error) {
