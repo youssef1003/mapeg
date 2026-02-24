@@ -82,11 +82,11 @@ export async function PUT(request: NextRequest) {
       summary
     } = body
 
-    // Validate required fields
-    if (!name || !phone || !skills) {
-      console.log('❌ Missing required fields')
+    // Validate required fields - allow empty strings but not null/undefined
+    if (name === undefined || name === null || phone === undefined || phone === null) {
+      console.log('❌ Missing required fields:', { name, phone })
       return NextResponse.json(
-        { error: 'Name, phone, and skills are required' },
+        { error: 'Name and phone are required' },
         { status: 400 }
       )
     }
