@@ -1,0 +1,154 @@
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  min-width: 300px;
+  max-width: 500px;
+  padding: 16px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: slideIn 0.3s ease-out;
+  z-index: 10000;
+  background: white;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.toastIcon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.toastMessage {
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.toastClose {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+  flex-shrink: 0;
+}
+
+.toastClose:hover {
+  opacity: 1;
+}
+
+/* Success */
+.toast.success {
+  background: #f0fdf4;
+  border-left: 4px solid #22c55e;
+}
+
+.toast.success .toastIcon {
+  background: #22c55e;
+  color: white;
+}
+
+.toast.success .toastMessage {
+  color: #166534;
+}
+
+/* Error */
+.toast.error {
+  background: #fef2f2;
+  border-left: 4px solid #ef4444;
+}
+
+.toast.error .toastIcon {
+  background: #ef4444;
+  color: white;
+}
+
+.toast.error .toastMessage {
+  color: #991b1b;
+}
+
+/* Info */
+.toast.info {
+  background: #eff6ff;
+  border-left: 4px solid #3b82f6;
+}
+
+.toast.info .toastIcon {
+  background: #3b82f6;
+  color: white;
+}
+
+.toast.info .toastMessage {
+  color: #1e40af;
+}
+
+/* Warning */
+.toast.warning {
+  background: #fffbeb;
+  border-left: 4px solid #f59e0b;
+}
+
+.toast.warning .toastIcon {
+  background: #f59e0b;
+  color: white;
+}
+
+.toast.warning .toastMessage {
+  color: #92400e;
+}
+
+/* RTL Support */
+[dir="rtl"] .toast {
+  right: auto;
+  left: 20px;
+}
+
+[dir="rtl"] .toast.success,
+[dir="rtl"] .toast.error,
+[dir="rtl"] .toast.info,
+[dir="rtl"] .toast.warning {
+  border-left: none;
+  border-right: 4px solid;
+}
+
+@keyframes slideInRTL {
+  from {
+    transform: translateX(-400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+[dir="rtl"] .toast {
+  animation: slideInRTL 0.3s ease-out;
+}
