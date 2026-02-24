@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { requireAdmin } from '@/lib/auth'
 
+export const dynamic = 'force-dynamic'
+
 // GET - Fetch all candidates (Admin only - contains PII)
 export async function GET(request: NextRequest) {
     const session = await requireAdmin(request)

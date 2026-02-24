@@ -170,11 +170,17 @@ export default function Header() {
                             </button>
                         </>
                     ) : isLoggedIn && (userRole === 'CANDIDATE' || userRole === 'EMPLOYER') ? (
-                        // Logged in user: show name + Logout
+                        // Logged in user: show welcome message + Logout
                         <>
                             {userName && (
-                                <span style={{ marginLeft: '1rem', color: '#666', fontSize: '14px' }}>
-                                    مرحباً، {userName}
+                                <span style={{ 
+                                    marginLeft: params.locale === 'ar' ? '1rem' : '0',
+                                    marginRight: params.locale === 'en' ? '1rem' : '0',
+                                    color: '#1e40af', 
+                                    fontSize: '15px',
+                                    fontWeight: '500'
+                                }}>
+                                    {params.locale === 'ar' ? `مرحباً، ${userName}` : `Hello, ${userName}`}
                                 </span>
                             )}
                             <button onClick={handleLogout} className="btn btn-primary">

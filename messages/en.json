@@ -19,7 +19,8 @@
         "myApplications": "My Applications",
         "postJob": "Post a Job",
         "myJobs": "My Jobs",
-        "applications": "Applications"
+        "applications": "Applications",
+        "welcome": "Hello"
     },
     "Hero": {
         "badge": "🚀 #1 Recruitment Agency in Egypt",

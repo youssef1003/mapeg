@@ -40,13 +40,21 @@ export default function JobsPage() {
 
     const fetchJobs = async () => {
         try {
-            const response = await fetch(apiUrl('/jobs'))
+            console.log('[Jobs Page] Fetching jobs from API...')
+            const response = await fetch(apiUrl('/jobs'), {
+                credentials: 'include'
+            })
+            console.log('[Jobs Page] Response status:', response.status)
+            
             if (response.ok) {
                 const data = await response.json()
+                console.log('[Jobs Page] Jobs received:', data.length, 'jobs')
                 setJobs(data)
+            } else {
+                console.error('[Jobs Page] Failed to fetch jobs:', response.status)
             }
         } catch (error) {
-            console.error('Error fetching jobs:', error)
+            console.error('[Jobs Page] Error fetching jobs:', error)
         } finally {
             setLoading(false)
         }
