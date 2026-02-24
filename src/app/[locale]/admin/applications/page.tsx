@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useToast } from '@/contexts/ToastContext'
+import LoadingSpinner from '@/components/common/LoadingSpinner'
 import styles from '../admin.module.css'
 import pageStyles from './page.module.css'
 
@@ -20,6 +22,7 @@ export default function AdminApplicationsPage() {
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
+  const toast = useToast()
 
   useEffect(() => {
     fetchApplications()
@@ -27,11 +30,13 @@ export default function AdminApplicationsPage() {
 
   const fetchApplications = async () => {
     try {
-      const response = await fetch('/api/applications')
+      const response = await fetch('/api/applications', {
+        credentials: 'include'
+      })
       if (response.ok) {
         const data = await response.json()
         // Transform data to match our interface
-        const transformedData = data.map((app: any) => ({
+        const transformedData = data.applications.map((app: any) => ({
           id: app.id,
           candidateName: app.candidate?.name || 'غير متوفر',
           candidateEmail: app.candidate?.email || 'غير متوفر',
@@ -39,12 +44,13 @@ export default function AdminApplicationsPage() {
           company: app.job?.company || 'غير متوفر',
           status: app.status,
           createdAt: app.createdAt,
-          cvUrl: app.candidate?.cvUrl || null,
+          cvUrl: app.cvUrl || null,
         }))
         setApplications(transformedData)
       }
     } catch (error) {
       console.error('Error fetching applications:', error)
+      toast.error('فشل تحميل الطلبات')
     } finally {
       setLoading(false)
     }
@@ -55,6 +61,7 @@ export default function AdminApplicationsPage() {
       const response = await fetch(`/api/applications/${applicationId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ status: newStatus }),
       })
 
@@ -63,13 +70,13 @@ export default function AdminApplicationsPage() {
         setApplications(applications.map(app =>
           app.id === applicationId ? { ...app, status: newStatus } : app
         ))
-        alert('✅ تم تحديث حالة الطلب بنجاح!')
+        toast.success('تم تحديث حالة الطلب بنجاح!')
       } else {
-        alert('❌ فشل تحديث حالة الطلب')
+        toast.error('فشل تحديث حالة الطلب')
       }
     } catch (error) {
       console.error('Error updating application:', error)
-      alert('❌ حدث خطأ أثناء التحديث')
+      toast.error('حدث خطأ أثناء التحديث')
     }
   }
 
@@ -112,7 +119,8 @@ export default function AdminApplicationsPage() {
           <p>عرض ومتابعة جميع طلبات التوظيف</p>
         </div>
         <div style={{ textAlign: 'center', padding: '3rem' }}>
-          <p>جاري تحميل الطلبات...</p>
+          <LoadingSpinner size="large" />
+          <p style={{ marginTop: '1rem' }}>جاري تحميل الطلبات...</p>
         </div>
       </>
     )
