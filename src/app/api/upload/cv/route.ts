@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireCandidate } from '@/lib/auth'
 import { PrismaClient } from '@prisma/client'
-import { writeFile, mkdir } from 'fs/promises'
-import { join } from 'path'
-import { existsSync } from 'fs'
+import { put } from '@vercel/blob'
 
 const prisma = new PrismaClient()
 
@@ -63,34 +61,27 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Create uploads directory if it doesn't exist
-    const uploadsDir = join(process.cwd(), 'public', 'uploads', 'cvs')
-    if (!existsSync(uploadsDir)) {
-      console.log('📁 Creating directory:', uploadsDir)
-      await mkdir(uploadsDir, { recursive: true })
-    }
-
     // Generate unique filename
     const timestamp = Date.now()
     const fileExtension = file.name.split('.').pop()
     const fileName = `cv_${session.email.replace(/[^a-zA-Z0-9]/g, '_')}_${timestamp}.${fileExtension}`
-    const filePath = join(uploadsDir, fileName)
-    const publicPath = `/uploads/cvs/${fileName}`
     
-    console.log('💾 Saving file to:', filePath)
+    console.log('💾 Uploading file to Vercel Blob:', fileName)
 
-    // Save file
-    const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
-    await writeFile(filePath, buffer)
-    console.log('✅ File saved successfully')
+    // Upload to Vercel Blob
+    const blob = await put(fileName, file, {
+      access: 'public',
+      addRandomSuffix: false,
+    })
+    
+    console.log('✅ File uploaded successfully to:', blob.url)
 
     // Update candidate record
     console.log('📝 Updating database for email:', session.email)
     await prisma.candidate.update({
       where: { email: session.email },
       data: {
-        cvFilePath: publicPath,
+        cvFilePath: blob.url,
         updatedAt: new Date()
       }
     })
@@ -98,7 +89,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      filePath: publicPath,
+      filePath: blob.url,
       message: 'CV uploaded successfully'
     })
   } catch (error) {
