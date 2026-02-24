@@ -68,13 +68,14 @@ export async function POST(request: NextRequest) {
     let cvUrl: string
 
     // Check if we're on Vercel with Blob Storage
-    if (process.env.BLOB_READ_WRITE_TOKEN) {
+    if (process.env.UPLOAD_BLOB_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN) {
       console.log('💾 Uploading to Vercel Blob Storage...')
       const { put } = await import('@vercel/blob')
       
       const blob = await put(fileName, file, {
         access: 'public',
         addRandomSuffix: false,
+        token: process.env.UPLOAD_BLOB_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN,
       })
       
       cvUrl = blob.url
