@@ -30,20 +30,32 @@ export default function Header() {
                 
                 if (response.ok) {
                     const data = await response.json()
-                    console.log('[Header] Auth check:', data)
+                    console.log('[Header] Auth check response:', data)
+                    console.log('[Header] User data:', data.user)
+                    console.log('[Header] User role:', data.user?.role)
+                    console.log('[Header] User name:', data.user?.name)
+                    
                     setIsLoggedIn(data.isLoggedIn || data.authenticated)
                     
                     // Get role and name from user object
                     if (data.user && data.user.role) {
+                        console.log('[Header] Setting role:', data.user.role)
+                        console.log('[Header] Setting name:', data.user.name)
                         setUserRole(data.user.role)
                         setUserName(data.user.name)
                     } else if (data.isAdmin) {
+                        console.log('[Header] Setting ADMIN role')
                         setUserRole('ADMIN')
-                        setUserName('Admin')
+                        setUserName('Super Admin')
                     } else {
+                        console.log('[Header] No user data, clearing state')
                         setUserRole(null)
                         setUserName(null)
                     }
+                    
+                    console.log('[Header] Final state - isLoggedIn:', data.isLoggedIn || data.authenticated)
+                    console.log('[Header] Final state - userRole:', data.user?.role || (data.isAdmin ? 'ADMIN' : null))
+                    console.log('[Header] Final state - userName:', data.user?.name || (data.isAdmin ? 'Super Admin' : null))
                 } else {
                     console.log('[Header] Auth check failed')
                     setIsLoggedIn(false)
@@ -162,45 +174,58 @@ export default function Header() {
 
                 <div className={styles.headerActions}>
                     <LanguageSwitcher />
-                    {userRole === 'ADMIN' ? (
-                        // Admin: show Dashboard + Logout only
-                        <>
-                            <button onClick={handleDashboardClick} className="btn btn-secondary">
-                                {t('dashboard')}
-                            </button>
-                            <button onClick={handleLogout} className="btn btn-primary">
-                                {t('logout')}
-                            </button>
-                        </>
-                    ) : isLoggedIn && (userRole === 'CANDIDATE' || userRole === 'EMPLOYER') ? (
-                        // Logged in user: show welcome message + Logout
-                        <>
-                            {userName && (
-                                <span style={{ 
-                                    marginLeft: currentLocale === 'ar' ? '1rem' : '0',
-                                    marginRight: currentLocale === 'en' ? '1rem' : '0',
-                                    color: '#1e40af', 
-                                    fontSize: '15px',
-                                    fontWeight: '500'
-                                }}>
-                                    {currentLocale === 'ar' ? `مرحباً، ${userName}` : `Hello, ${userName}`}
-                                </span>
-                            )}
-                            <button onClick={handleLogout} className="btn btn-primary">
-                                {t('logout')}
-                            </button>
-                        </>
-                    ) : (
-                        // Guest: show Login + Register
-                        <>
-                            <Link href="/auth/login" className="btn btn-secondary">
-                                {t('login')}
-                            </Link>
-                            <Link href="/auth/register" className="btn btn-primary">
-                                {t('register')}
-                            </Link>
-                        </>
-                    )}
+                    {(() => {
+                        console.log('[Header Render] isLoggedIn:', isLoggedIn)
+                        console.log('[Header Render] userRole:', userRole)
+                        console.log('[Header Render] userName:', userName)
+                        console.log('[Header Render] currentLocale:', currentLocale)
+                        
+                        if (userRole === 'ADMIN') {
+                            console.log('[Header Render] Showing ADMIN buttons')
+                            return (
+                                <>
+                                    <button onClick={handleDashboardClick} className="btn btn-secondary">
+                                        {t('dashboard')}
+                                    </button>
+                                    <button onClick={handleLogout} className="btn btn-primary">
+                                        {t('logout')}
+                                    </button>
+                                </>
+                            )
+                        } else if (isLoggedIn && (userRole === 'CANDIDATE' || userRole === 'EMPLOYER')) {
+                            console.log('[Header Render] Showing CANDIDATE/EMPLOYER welcome + logout')
+                            return (
+                                <>
+                                    {userName && (
+                                        <span style={{ 
+                                            marginLeft: currentLocale === 'ar' ? '1rem' : '0',
+                                            marginRight: currentLocale === 'en' ? '1rem' : '0',
+                                            color: '#1e40af', 
+                                            fontSize: '15px',
+                                            fontWeight: '500'
+                                        }}>
+                                            {currentLocale === 'ar' ? `مرحباً، ${userName}` : `Hello, ${userName}`}
+                                        </span>
+                                    )}
+                                    <button onClick={handleLogout} className="btn btn-primary">
+                                        {t('logout')}
+                                    </button>
+                                </>
+                            )
+                        } else {
+                            console.log('[Header Render] Showing Login + Register (guest)')
+                            return (
+                                <>
+                                    <Link href="/auth/login" className="btn btn-secondary">
+                                        {t('login')}
+                                    </Link>
+                                    <Link href="/auth/register" className="btn btn-primary">
+                                        {t('register')}
+                                    </Link>
+                                </>
+                            )
+                        }
+                    })()}
                 </div>
 
                 <button
