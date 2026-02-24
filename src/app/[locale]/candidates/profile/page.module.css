@@ -1,137 +1,336 @@
 .container {
-  min-height: 80vh;
-  padding: 2rem 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem 1rem;
 }
 
 .content {
   max-width: 900px;
   margin: 0 auto;
-  padding: 0 1rem;
-}
-
-.loading {
-  text-align: center;
-  padding: 4rem;
-  font-size: 1.25rem;
-  color: var(--gray);
 }
 
 .header {
+  text-align: center;
+  color: white;
   margin-bottom: 2rem;
 }
 
 .header h1 {
-  font-size: 2rem;
+  font-size: 2.5rem;
+  font-weight: 700;
   margin-bottom: 0.5rem;
-  color: var(--dark);
 }
 
 .header p {
-  color: var(--gray);
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  color: white;
+  gap: 1rem;
+}
+
+.error {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  color: #e53e3e;
   font-size: 1.1rem;
 }
 
-.card {
-  background: var(--white);
-  border-radius: var(--radius-lg);
+.profileCard {
+  background: white;
+  border-radius: 12px;
   padding: 2rem;
-  box-shadow: var(--shadow);
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.cardHeader {
+.profileHeader {
   display: flex;
+  gap: 2rem;
   align-items: center;
-  gap: 1.5rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid var(--light-secondary);
-  margin-bottom: 2rem;
 }
 
-.avatar {
-  width: 80px;
-  height: 80px;
+.avatarSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.avatarWrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.avatarImage {
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
-  background: var(--gradient-primary);
+  object-fit: cover;
+  border: 4px solid #667eea;
+}
+
+.avatarPlaceholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
-  font-weight: 700;
+  font-size: 3rem;
   color: white;
+  font-weight: 700;
+  border: 4px solid #667eea;
 }
 
-.cardHeader h2 {
+.uploadingOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.changePhotoBtn {
+  padding: 0.5rem 1rem;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.3s;
+}
+
+.changePhotoBtn:hover:not(:disabled) {
+  background: #5568d3;
+}
+
+.changePhotoBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.profileInfo {
+  flex: 1;
+}
+
+.profileInfo h2 {
+  font-size: 2rem;
+  color: #2d3748;
+  margin-bottom: 0.5rem;
+}
+
+.email,
+.phone,
+.profession {
+  color: #718096;
+  margin: 0.25rem 0;
+  font-size: 1rem;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.cardTitle {
   font-size: 1.5rem;
-  margin-bottom: 0.25rem;
-  color: var(--dark);
+  color: #2d3748;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #e2e8f0;
 }
 
-.cardHeader p {
-  color: var(--gray);
-}
-
-.section {
-  margin-bottom: 2rem;
-}
-
-.section h3 {
-  font-size: 1.25rem;
-  margin-bottom: 1rem;
-  color: var(--dark);
-}
-
-.infoGrid {
+.formGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1.5rem;
 }
 
-.infoItem label {
-  display: block;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--gray);
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.infoItem p {
-  font-size: 1rem;
-  color: var(--dark);
-}
-
-.actions {
+.formGroup {
   display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-.notice {
-  margin-top: 2rem;
-  padding: 1rem;
-  background: rgba(99, 102, 241, 0.1);
-  border-radius: var(--radius);
-  border-left: 4px solid var(--primary);
-}
-
-.notice p {
-  margin: 0;
-  color: var(--dark);
+.formGroup label {
+  font-weight: 600;
+  color: #2d3748;
   font-size: 0.95rem;
 }
 
+.formGroup input,
+.formGroup textarea {
+  padding: 0.75rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.formGroup input:focus,
+.formGroup textarea:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.formGroup textarea {
+  resize: vertical;
+  font-family: inherit;
+}
+
+.formGroup small {
+  color: #718096;
+  font-size: 0.85rem;
+}
+
+.disabledInput {
+  background: #f7fafc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.cvSection {
+  padding: 1rem 0;
+}
+
+.cvUploaded {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background: #f7fafc;
+  border-radius: 8px;
+  border: 2px solid #e2e8f0;
+}
+
+.cvInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cvIcon {
+  font-size: 2.5rem;
+}
+
+.cvName {
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0;
+}
+
+.cvStatus {
+  color: #48bb78;
+  font-size: 0.9rem;
+  margin: 0.25rem 0 0 0;
+}
+
+.cvActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.cvBtn {
+  padding: 0.5rem 1rem;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: background 0.3s;
+  display: inline-block;
+}
+
+.cvBtn:hover:not(:disabled) {
+  background: #5568d3;
+}
+
+.cvBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cvUpload {
+  text-align: center;
+  padding: 3rem 2rem;
+  background: #f7fafc;
+  border-radius: 8px;
+  border: 2px dashed #cbd5e0;
+}
+
+.uploadIcon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.uploadText {
+  color: #718096;
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+}
+
+.saveSection {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
 @media (max-width: 768px) {
-  .cardHeader {
+  .container {
+    padding: 1rem 0.5rem;
+  }
+
+  .header h1 {
+    font-size: 2rem;
+  }
+
+  .profileHeader {
     flex-direction: column;
     text-align: center;
   }
 
-  .actions {
+  .profileInfo h2 {
+    font-size: 1.5rem;
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .cvUploaded {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .cvActions {
+    width: 100%;
     flex-direction: column;
   }
 
-  .actions .btn {
+  .cvBtn {
     width: 100%;
   }
 }

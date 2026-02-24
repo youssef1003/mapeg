@@ -69,6 +69,7 @@ model Candidate {
   phone             String
   resume            String?
   cvFilePath        String?
+  profileImage      String?
   profession        String?
   summary           String?
   yearsOfExperience Int?

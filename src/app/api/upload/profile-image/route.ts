@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     }
 
     const formData = await request.formData()
-    const file = formData.get('cv') as File
+    const file = formData.get('image') as File
     
     if (!file) {
       return NextResponse.json(
@@ -31,29 +31,23 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate file type
-    const allowedTypes = [
-      'application/pdf',
-      'application/msword',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-    ]
-    
-    if (!allowedTypes.includes(file.type)) {
+    if (!file.type.startsWith('image/')) {
       return NextResponse.json(
-        { error: 'Invalid file type. Only PDF and Word documents are allowed' },
+        { error: 'Invalid file type. Only images are allowed' },
         { status: 400 }
       )
     }
 
-    // Validate file size (5MB)
-    if (file.size > 5 * 1024 * 1024) {
+    // Validate file size (2MB)
+    if (file.size > 2 * 1024 * 1024) {
       return NextResponse.json(
-        { error: 'File size exceeds 5MB limit' },
+        { error: 'File size exceeds 2MB limit' },
         { status: 400 }
       )
     }
 
     // Create uploads directory if it doesn't exist
-    const uploadsDir = join(process.cwd(), 'public', 'uploads', 'cvs')
+    const uploadsDir = join(process.cwd(), 'public', 'uploads', 'profiles')
     if (!existsSync(uploadsDir)) {
       await mkdir(uploadsDir, { recursive: true })
     }
@@ -61,31 +55,31 @@ export async function POST(request: NextRequest) {
     // Generate unique filename
     const timestamp = Date.now()
     const fileExtension = file.name.split('.').pop()
-    const fileName = `cv_${session.email.replace(/[^a-zA-Z0-9]/g, '_')}_${timestamp}.${fileExtension}`
+    const fileName = `profile_${session.email.replace(/[^a-zA-Z0-9]/g, '_')}_${timestamp}.${fileExtension}`
     const filePath = join(uploadsDir, fileName)
-    const publicPath = `/uploads/cvs/${fileName}`
+    const publicPath = `/uploads/profiles/${fileName}`
 
     // Save file
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
     await writeFile(filePath, buffer)
 
-    // Update candidate record
+    // Update candidate record with profile image
     await prisma.candidate.update({
       where: { email: session.email },
       data: {
-        cvFilePath: publicPath,
+        profileImage: publicPath,
         updatedAt: new Date()
       }
     })
-
+    
     return NextResponse.json({
       success: true,
-      filePath: publicPath,
-      message: 'CV uploaded successfully'
+      imageUrl: publicPath,
+      message: 'Profile image uploaded successfully'
     })
   } catch (error) {
-    console.error('Error uploading CV:', error)
+    console.error('Error uploading profile image:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
