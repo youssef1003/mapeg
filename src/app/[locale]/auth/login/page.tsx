@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl'
 import { useRouter } from '@/navigation'
 import { Link } from '@/navigation'
 import { apiUrl } from '@/lib/api-url'
+import PasswordInput from '@/components/ui/PasswordInput'
 import styles from './page.module.css'
 
 export default function LoginPage() {
@@ -102,14 +103,24 @@ export default function LoginPage() {
                     </div>
                     <div className={styles.formGroup}>
                         <label>{t('passwordLabel')}</label>
-                        <input
-                            type="password"
-                            className={styles.formInput}
-                            placeholder="••••••••"
+                        <PasswordInput
+                            id="password"
+                            name="password"
                             value={formData.password}
                             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                            placeholder="••••••••"
                             required
+                            autoComplete="current-password"
+                            className={styles.formInput}
                         />
+                        <div style={{ textAlign: 'right', marginTop: '0.5rem' }}>
+                            <Link 
+                                href="/auth/forgot-password" 
+                                style={{ fontSize: '0.875rem', color: 'var(--primary)', textDecoration: 'none' }}
+                            >
+                                {t('forgotPassword') || 'Forgot Password?'}
+                            </Link>
+                        </div>
                     </div>
                     <button
                         type="submit"

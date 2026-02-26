@@ -138,6 +138,7 @@
 @media (max-width: 1024px) {
     .footerGrid {
         grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-xl);
     }
 
     .footerBrand {
@@ -150,6 +151,7 @@
 @media (max-width: 768px) {
     .footerGrid {
         grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-lg);
     }
 
     .footerBottomContent {
@@ -157,10 +159,35 @@
         gap: var(--space-md);
         text-align: center;
     }
+
+    .footerLegal {
+        flex-direction: column;
+        gap: var(--space-sm);
+    }
 }
 
 @media (max-width: 480px) {
     .footerGrid {
         grid-template-columns: 1fr;
+    }
+
+    .footerTop {
+        padding: var(--space-2xl) 0;
+    }
+
+    .footerBrand {
+        text-align: center;
+    }
+
+    .socialLinks {
+        justify-content: center;
+    }
+
+    .footerColumn {
+        text-align: center;
+    }
+
+    .footerList a:hover {
+        padding-left: 0;
     }
 }

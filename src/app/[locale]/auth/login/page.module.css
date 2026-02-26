@@ -129,3 +129,145 @@
 .loginFooter a:hover {
     text-decoration: underline;
 }
+
+/* Success Message */
+.successMessage {
+    text-align: center;
+    padding: 2rem;
+}
+
+.successIcon {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 2rem;
+    color: white;
+    font-weight: bold;
+}
+
+.successMessage h2 {
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.successMessage p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.backToLogin {
+    display: inline-block;
+    margin-top: 1.5rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--primary);
+    color: white;
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.backToLogin:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+}
+
+/* Auth Container & Card (for other auth pages) */
+.authContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: var(--bg-secondary);
+    padding: 2rem;
+}
+
+.authCard {
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 450px;
+    box-shadow: var(--shadow-lg);
+}
+
+.authHeader {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.authTitle {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.authSubtitle {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.authForm {
+    margin-top: 1.5rem;
+}
+
+.submitButton {
+    width: 100%;
+    padding: 0.875rem;
+    border-radius: var(--radius-md);
+    background: var(--primary);
+    color: white;
+    font-weight: 600;
+    font-size: 0.875rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 1rem;
+}
+
+.submitButton:hover:not(:disabled) {
+    background: #2563eb;
+    transform: translateY(-1px);
+}
+
+.submitButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.authFooter {
+    margin-top: 1.5rem;
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--text-tertiary);
+}
+
+.authFooter a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.authFooter a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+    .loginContainer,
+    .authContainer {
+        padding: 1rem;
+    }
+
+    .loginCard,
+    .authCard {
+        padding: 1.5rem;
+    }
+}

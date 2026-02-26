@@ -28,6 +28,13 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     padding-top: 80px; /* Fixed header height */
+    overflow-x: hidden; /* Prevent horizontal scroll on mobile */
+}
+
+@media (max-width: 768px) {
+    body {
+        padding-top: 70px; /* Smaller header on mobile */
+    }
 }
 
 h1,
@@ -50,6 +57,7 @@ a {
 img {
     max-width: 100%;
     height: auto;
+    display: block;
 }
 
 button {
@@ -71,11 +79,30 @@ select {
     max-width: var(--container-max);
     margin: 0 auto;
     padding: 0 var(--container-padding);
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 0 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 0 0.75rem;
+    }
 }
 
 /* Section Spacing */
 .section {
     padding: var(--space-3xl) 0;
+}
+
+@media (max-width: 768px) {
+    .section {
+        padding: var(--space-2xl) 0;
+    }
 }
 
 .section-title {
@@ -84,12 +111,30 @@ select {
     margin-bottom: var(--space-md);
 }
 
+@media (max-width: 768px) {
+    .section-title {
+        font-size: 1.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .section-title {
+        font-size: 1.5rem;
+    }
+}
+
 .section-subtitle {
     text-align: center;
     color: var(--gray);
     font-size: 1.125rem;
     max-width: 600px;
     margin: 0 auto var(--space-2xl);
+}
+
+@media (max-width: 768px) {
+    .section-subtitle {
+        font-size: 1rem;
+    }
 }
 
 /* Gradient Text */
@@ -266,14 +311,7 @@ select {
     .grid-3,
     .grid-2 {
         grid-template-columns: 1fr;
-    }
-
-    .section-title {
-        font-size: 2rem;
-    }
-
-    .container {
-        padding: 0 1rem;
+        gap: var(--space-lg);
     }
 }
 
@@ -463,4 +501,64 @@ select {
 
 ::-webkit-scrollbar-thumb:hover {
     background: var(--gray);
+}
+
+/* Mobile Touch Improvements */
+@media (max-width: 768px) {
+    /* Larger touch targets for mobile */
+    button,
+    a,
+    input,
+    select,
+    textarea {
+        min-height: 44px; /* iOS recommended touch target */
+    }
+
+    .btn {
+        padding: 1rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    .btn-sm {
+        padding: 0.75rem 1.25rem;
+        font-size: 0.9rem;
+    }
+
+    /* Prevent text size adjustment on orientation change */
+    html {
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+    }
+
+    /* Improve tap highlight */
+    * {
+        -webkit-tap-highlight-color: rgba(99, 102, 241, 0.1);
+    }
+
+    /* Better spacing for mobile forms */
+    .form-group {
+        margin-bottom: var(--space-md);
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+        font-size: 16px; /* Prevent zoom on iOS */
+        padding: 1rem;
+    }
+}
+
+/* Prevent horizontal scroll on all devices */
+html,
+body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* Improve image loading on mobile */
+@media (max-width: 768px) {
+    img {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
 }

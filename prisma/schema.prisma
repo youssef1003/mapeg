@@ -15,16 +15,20 @@ enum Role {
 }
 
 model User {
-  id        String     @id @default(cuid())
-  name      String?
-  email     String     @unique
-  password  String
-  phone     String?
-  role      Role       @default(CANDIDATE)
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  candidate Candidate?
-  employer  Employer?
+  id                String     @id @default(cuid())
+  name              String?
+  email             String     @unique
+  password          String
+  phone             String?
+  role              Role       @default(CANDIDATE)
+  emailVerified     Boolean    @default(false)
+  verificationToken String?    @unique
+  resetToken        String?    @unique
+  resetTokenExpiry  DateTime?
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  candidate         Candidate?
+  employer          Employer?
 }
 
 // Admin model kept for backward compatibility (deprecated)

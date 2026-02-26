@@ -19,6 +19,13 @@
     gap: var(--space-xl);
 }
 
+@media (max-width: 768px) {
+    .headerContainer {
+        height: 70px;
+        gap: var(--space-md);
+    }
+}
+
 .logo {
     display: flex;
     align-items: center;
@@ -27,6 +34,18 @@
     font-size: 1.75rem;
     font-weight: 800;
     color: var(--dark);
+}
+
+@media (max-width: 768px) {
+    .logo {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo {
+        font-size: 1.25rem;
+    }
 }
 
 .logoIcon {
@@ -151,24 +170,29 @@
 
     .menuToggle {
         display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .navOpen {
         display: flex;
         flex-direction: column;
         position: absolute;
-        top: 80px;
+        top: 70px;
         left: 0;
         right: 0;
         background: var(--white);
         padding: var(--space-xl);
         box-shadow: var(--shadow-lg);
         border-top: 1px solid var(--light-secondary);
+        max-height: calc(100vh - 70px);
+        overflow-y: auto;
     }
 
     .navOpen .navLink {
         padding: var(--space-md) 0;
         border-bottom: 1px solid var(--light-secondary);
+        font-size: 1rem;
     }
 
     .mobileSwitcher {
@@ -176,5 +200,11 @@
         justify-content: center;
         margin-top: var(--space-lg);
         padding-top: var(--space-md);
+    }
+}
+
+@media (max-width: 480px) {
+    .navOpen {
+        padding: var(--space-lg);
     }
 }

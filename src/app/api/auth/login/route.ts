@@ -99,6 +99,17 @@ export async function POST(request: NextRequest) {
             )
         }
 
+        // Check if email is verified
+        if (!user.emailVerified) {
+            return NextResponse.json(
+                { 
+                    error: 'Please verify your email before logging in. Check your inbox for the verification link.',
+                    requiresVerification: true 
+                },
+                { status: 403 }
+            )
+        }
+
         const isValidPassword = await bcrypt.compare(password, user.password)
 
         if (!isValidPassword) {

@@ -461,6 +461,7 @@
 @media (max-width: 1024px) {
     .heroContent {
         grid-template-columns: 1fr;
+        gap: var(--space-xl);
     }
 
     .heroVisual {
@@ -473,6 +474,7 @@
 
     .statsGrid {
         grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-lg);
     }
 
     .jobsGrid {
@@ -497,13 +499,33 @@
         font-size: 2rem;
     }
 
+    .heroSubtitle {
+        font-size: 1rem;
+    }
+
     .searchBox {
         flex-direction: column;
+        padding: 0.75rem;
+    }
+
+    .searchInput {
+        padding: 0.875rem 1rem;
     }
 
     .searchSelect {
         border-left: none;
         border-top: 1px solid var(--light-secondary);
+        padding: 0.875rem 1rem;
+        min-width: 100%;
+    }
+
+    .searchBtn {
+        width: 100%;
+        padding: 0.875rem 1.25rem;
+    }
+
+    .popularSearches {
+        font-size: 0.8rem;
     }
 
     .sectionHeader {
@@ -526,9 +548,68 @@
 
     .ctaButtons {
         flex-direction: column;
+        width: 100%;
+    }
+
+    .ctaButtons .btn {
+        width: 100%;
     }
 
     .statValue {
         font-size: 2rem;
+    }
+
+    .statsGrid {
+        grid-template-columns: 1fr;
+        gap: var(--space-md);
+        padding: var(--space-lg);
+    }
+
+    .testimonialsGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero {
+        min-height: auto;
+        padding: var(--space-2xl) 0;
+    }
+
+    .heroTitle {
+        font-size: 1.75rem;
+    }
+
+    .heroSubtitle {
+        font-size: 0.9rem;
+    }
+
+    .heroBadge {
+        font-size: 0.75rem;
+        padding: 0.375rem 0.75rem;
+    }
+
+    .heroCard {
+        padding: var(--space-lg);
+    }
+
+    .heroCardNumber {
+        font-size: 2rem;
+    }
+
+    .heroCardLabel {
+        font-size: 0.8rem;
+    }
+
+    .employersGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .ctaContent h2 {
+        font-size: 1.75rem;
+    }
+
+    .ctaContent p {
+        font-size: 1rem;
     }
 }

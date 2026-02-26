@@ -63,6 +63,108 @@ export async function sendEmail({ to, subject, html }: EmailOptions) {
 
 // Email Templates
 export const emailTemplates = {
+  emailVerification: (locale: 'ar' | 'en', data: { name: string; verificationLink: string }) => ({
+    subject: locale === 'ar' 
+      ? 'تأكيد البريد الإلكتروني - MapEg'
+      : 'Email Verification - MapEg',
+    html: locale === 'ar' ? `
+      <div dir="rtl" style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #1e40af;">مرحباً ${data.name}</h2>
+        <p>شكراً لتسجيلك في MapEg! يرجى تأكيد بريدك الإلكتروني للمتابعة.</p>
+        <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
+          <a href="${data.verificationLink}" style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+            تأكيد البريد الإلكتروني
+          </a>
+        </div>
+        <p style="color: #6b7280; font-size: 14px;">
+          أو انسخ هذا الرابط في المتصفح:<br>
+          <a href="${data.verificationLink}" style="color: #1e40af; word-break: break-all;">${data.verificationLink}</a>
+        </p>
+        <p style="color: #ef4444; font-size: 14px; margin-top: 20px;">
+          ⚠️ هذا الرابط صالح لمدة 24 ساعة فقط.
+        </p>
+        <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
+          إذا لم تقم بإنشاء حساب، يرجى تجاهل هذا البريد.<br><br>
+          شكراً لاستخدامك MapEg<br>
+          <a href="https://mapeg.com" style="color: #1e40af;">mapeg.com</a>
+        </p>
+      </div>
+    ` : `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #1e40af;">Hello ${data.name}</h2>
+        <p>Thank you for registering with MapEg! Please verify your email to continue.</p>
+        <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
+          <a href="${data.verificationLink}" style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+            Verify Email
+          </a>
+        </div>
+        <p style="color: #6b7280; font-size: 14px;">
+          Or copy this link to your browser:<br>
+          <a href="${data.verificationLink}" style="color: #1e40af; word-break: break-all;">${data.verificationLink}</a>
+        </p>
+        <p style="color: #ef4444; font-size: 14px; margin-top: 20px;">
+          ⚠️ This link is valid for 24 hours only.
+        </p>
+        <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
+          If you didn't create an account, please ignore this email.<br><br>
+          Thank you for using MapEg<br>
+          <a href="https://mapeg.com" style="color: #1e40af;">mapeg.com</a>
+        </p>
+      </div>
+    `
+  }),
+
+  passwordReset: (locale: 'ar' | 'en', data: { name: string; resetLink: string }) => ({
+    subject: locale === 'ar'
+      ? 'إعادة تعيين كلمة المرور - MapEg'
+      : 'Password Reset - MapEg',
+    html: locale === 'ar' ? `
+      <div dir="rtl" style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #1e40af;">مرحباً ${data.name}</h2>
+        <p>تلقينا طلباً لإعادة تعيين كلمة المرور الخاصة بك.</p>
+        <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
+          <a href="${data.resetLink}" style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+            إعادة تعيين كلمة المرور
+          </a>
+        </div>
+        <p style="color: #6b7280; font-size: 14px;">
+          أو انسخ هذا الرابط في المتصفح:<br>
+          <a href="${data.resetLink}" style="color: #1e40af; word-break: break-all;">${data.resetLink}</a>
+        </p>
+        <p style="color: #ef4444; font-size: 14px; margin-top: 20px;">
+          ⚠️ هذا الرابط صالح لمدة ساعة واحدة فقط.
+        </p>
+        <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
+          إذا لم تطلب إعادة تعيين كلمة المرور، يرجى تجاهل هذا البريد. حسابك آمن.<br><br>
+          شكراً لاستخدامك MapEg<br>
+          <a href="https://mapeg.com" style="color: #1e40af;">mapeg.com</a>
+        </p>
+      </div>
+    ` : `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #1e40af;">Hello ${data.name}</h2>
+        <p>We received a request to reset your password.</p>
+        <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
+          <a href="${data.resetLink}" style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+            Reset Password
+          </a>
+        </div>
+        <p style="color: #6b7280; font-size: 14px;">
+          Or copy this link to your browser:<br>
+          <a href="${data.resetLink}" style="color: #1e40af; word-break: break-all;">${data.resetLink}</a>
+        </p>
+        <p style="color: #ef4444; font-size: 14px; margin-top: 20px;">
+          ⚠️ This link is valid for 1 hour only.
+        </p>
+        <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
+          If you didn't request a password reset, please ignore this email. Your account is safe.<br><br>
+          Thank you for using MapEg<br>
+          <a href="https://mapeg.com" style="color: #1e40af;">mapeg.com</a>
+        </p>
+      </div>
+    `
+  }),
+
   applicationSubmitted: (locale: 'ar' | 'en', data: { candidateName: string; jobTitle: string; companyName: string }) => ({
     subject: locale === 'ar' 
       ? `تم استلام طلبك للوظيفة: ${data.jobTitle}`

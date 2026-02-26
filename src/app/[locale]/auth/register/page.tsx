@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Link } from '@/navigation'
 import { apiUrl } from '@/lib/api-url'
+import PasswordInput from '@/components/ui/PasswordInput'
 import styles from '../login/page.module.css'
 
 export default function RegisterPage() {
@@ -76,6 +77,9 @@ export default function RegisterPage() {
         }
 
         try {
+            // Get current locale
+            const currentLocale = window.location.pathname.split('/')[1] || 'ar'
+            
             // Register User
             const response = await fetch(apiUrl('/auth/register'), {
                 method: 'POST',
@@ -86,22 +90,30 @@ export default function RegisterPage() {
                     password: formData.password,
                     role: role,
                     phone: formData.phone,
-                    companyName: role === 'EMPLOYER' ? formData.companyName : undefined
+                    companyName: role === 'EMPLOYER' ? formData.companyName : undefined,
+                    locale: currentLocale
                 }),
             })
 
             const data = await response.json()
 
             if (response.ok) {
-                if (role === 'CANDIDATE') {
+                if (data.requiresVerification) {
+                    // Show verification message
+                    setSuccess(currentLocale === 'ar' 
+                        ? 'تم إنشاء الحساب بنجاح! يرجى التحقق من بريدك الإلكتروني لتفعيل حسابك.'
+                        : 'Account created successfully! Please check your email to verify your account.')
+                    setTimeout(() => {
+                        router.push(`/${currentLocale}/auth/login`)
+                    }, 3000)
+                } else if (role === 'CANDIDATE') {
                     // Move to profile step with userId
                     setFormData(prev => ({ ...prev, userId: data.user.id }))
                     setStep(3)
                     setSuccess(t('accountCreated'))
                 } else {
-                    // Employer finished - cookies set by API, redirect with full reload
+                    // Employer finished
                     setSuccess(t('registrationSuccess'))
-                    const currentLocale = window.location.pathname.split('/')[1] || 'ar'
                     setTimeout(() => {
                         window.location.href = `/${currentLocale}`
                     }, 1500)
@@ -275,24 +287,31 @@ export default function RegisterPage() {
 
             <div className={styles.formGroup}>
                 <label>{t('passwordLabel')}</label>
-                <input
-                    type="password"
-                    className={styles.formInput}
-                    placeholder="••••••••"
+                <PasswordInput
+                    id="password"
+                    name="password"
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    placeholder="••••••••"
                     required
+                    autoComplete="new-password"
+                    className={styles.formInput}
                 />
+                <small style={{ color: '#6b7280', fontSize: '0.85rem', marginTop: '0.25rem', display: 'block' }}>
+                    {t('passwordRequirement') || 'At least 8 characters'}
+                </small>
             </div>
             <div className={styles.formGroup}>
                 <label>{t('confirmPasswordLabel')}</label>
-                <input
-                    type="password"
-                    className={styles.formInput}
-                    placeholder="••••••••"
+                <PasswordInput
+                    id="confirmPassword"
+                    name="confirmPassword"
                     value={formData.confirmPassword}
                     onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                    placeholder="••••••••"
                     required
+                    autoComplete="new-password"
+                    className={styles.formInput}
                 />
             </div>
 
